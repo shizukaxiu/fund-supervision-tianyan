@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { Graph } from '@antv/g6';
-import { Network } from 'lucide-react';
+import { Network, Map as MapIcon } from 'lucide-react';
 import type { NetworkData, Alert, MedicalRecord, NetworkNode } from '../types';
 import { NodeDetailDrawer } from './NodeDetailDrawer';
+import { NetworkMapModal } from './NetworkMapModal';
 
 interface FraudNetworkProps {
   network: NetworkData;
@@ -17,6 +18,7 @@ export function FraudNetwork({ network, records, selectedAlert }: FraudNetworkPr
   const containerRef = useRef<HTMLDivElement>(null);
   const graphRef = useRef<Graph | null>(null);
   const [selectedNode, setSelectedNode] = useState<NetworkNode | null>(null);
+  const [isMapOpen, setIsMapOpen] = useState(false);
 
   // 节点类型对应的颜色
   const typeColors: Record<string, string> = {
@@ -205,7 +207,15 @@ export function FraudNetwork({ network, records, selectedAlert }: FraudNetworkPr
       <div className="panel-title">
         <Network className="w-4 h-4" />
         <span>风险网络图谱</span>
-        <span className="ml-auto text-xs text-slate-500">
+        <button
+          onClick={() => setIsMapOpen(true)}
+          className="ml-auto mr-2 flex items-center gap-1 px-2 py-1 rounded bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/20 transition-colors text-xs"
+          title="地图模式"
+        >
+          <MapIcon className="w-3 h-3" />
+          <span>地图模式</span>
+        </button>
+        <span className="text-xs text-slate-500">
           {network.nodes.length} 节点 · {network.edges.length} 关系 · {network.gangs} 团伙
         </span>
       </div>
@@ -236,6 +246,14 @@ export function FraudNetwork({ network, records, selectedAlert }: FraudNetworkPr
           onClose={() => setSelectedNode(null)}
         />
       </div>
+
+      <NetworkMapModal
+        network={network}
+        records={records}
+        selectedAlert={selectedAlert}
+        isOpen={isMapOpen}
+        onClose={() => setIsMapOpen(false)}
+      />
     </div>
   );
 }
