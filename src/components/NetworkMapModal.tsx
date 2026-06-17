@@ -6,6 +6,7 @@ import { X, Map as MapIcon, Network } from 'lucide-react';
 import type { NetworkData, Alert, MedicalRecord, NetworkNode } from '../types';
 import { NodeDetailDrawer } from './NodeDetailDrawer';
 import { NanjingMapBackground } from './NanjingMapBackground';
+import hospitalMapCoords from '../mock/hospitalMapCoords.json';
 
 interface NetworkMapModalProps {
   network: NetworkData;
@@ -15,122 +16,7 @@ interface NetworkMapModalProps {
   onClose: () => void;
 }
 
-/**
- * 医院在南京市区的示意坐标（与 NanjingMapBackground 的 viewBox 0-1000 对应）
- */
-const HOSPITAL_COORDS: Record<string, { x: number; y: number }> = {
-  H001: { x: 330, y: 310 }, // 南京鼓楼医院
-  H002: { x: 390, y: 290 }, // 江苏省人民医院
-  H003: { x: 470, y: 400 }, // 南京市第一医院
-  H004: { x: 360, y: 250 }, // 东南大学附属中大医院
-  H005: { x: 490, y: 430 }, // 南京市中医院
-  H006: { x: 300, y: 340 }, // 南京医科大学第二附属医院
-  H007: { x: 540, y: 740 }, // 江宁医院
-  H008: { x: 670, y: 360 }, // 南京市栖霞区医院
-  H009: { x: 440, y: 600 }, // 南京市雨花台区中心医院
-  H010: { x: 350, y: 550 }, // 南京市建邺医院
-};
-
 const MAP_SIZE = 1000;
-
-/**
- * 为地图模式计算节点初始位置：
- * - 医院节点固定在地图坐标
- * - 医生节点均匀分布在其所属医院周围
- * - 患者节点均匀分布在其所属医生周围
- */
-function computeMapPositions(network: NetworkData): Record<string, { x: number; y: number }> {
-  const positions: Record<string, { x: number; y: number }> = {};
-
-  // 1. 医院固定
-  network.nodes
-    .filter((n) => n.type === 'hospital')
-    .forEach((n) => {
-      positions[n.id] = HOSPITAL_COORDS[n.id] ?? { x: MAP_SIZE / 2, y: MAP_SIZE / 2 };
-    });
-
-  // 构建邻接关系：source -> target
-  const outEdges = new Map<string, string[]>();
-  network.edges.forEach((edge) => {
-    const list = outEdges.get(edge.source) ?? [];
-    list.push(edge.target);
-    outEdges.set(edge.source, list);
-  });
-
-  // 2. 医生节点：找到其归属医院，在医院周围扇形分布
-  const doctors = network.nodes.filter((n) => n.type === 'doctor');
-  const doctorsByHospital = new Map<string, string[]>();
-  doctors.forEach((doc) => {
-    const hospitalId = outEdges.get(doc.id)?.find((tid) => network.nodes.find((n) => n.id === tid)?.type === 'hospital');
-    if (hospitalId) {
-      const list = doctorsByHospital.get(hospitalId) ?? [];
-      list.push(doc.id);
-      doctorsByHospital.set(hospitalId, list);
-    }
-  });
-
-  doctorsByHospital.forEach((docIds, hospitalId) => {
-    const center = positions[hospitalId] ?? { x: MAP_SIZE / 2, y: MAP_SIZE / 2 };
-    const count = docIds.length;
-    const radius = 240;
-    docIds.forEach((id, index) => {
-      const angle = (index / Math.max(count, 1)) * Math.PI * 2 - Math.PI / 2;
-      positions[id] = {
-        x: center.x + Math.cos(angle) * radius,
-        y: center.y + Math.sin(angle) * radius,
-      };
-    });
-  });
-
-  // 处理未找到归属医院的医生
-  doctors
-    .filter((doc) => !positions[doc.id])
-    .forEach((doc, index, arr) => {
-      const angle = (index / Math.max(arr.length, 1)) * Math.PI * 2;
-      positions[doc.id] = {
-        x: MAP_SIZE / 2 + Math.cos(angle) * 300,
-        y: MAP_SIZE / 2 + Math.sin(angle) * 300,
-      };
-    });
-
-  // 3. 患者节点：找到其归属医生，在医生周围扇形分布
-  const patients = network.nodes.filter((n) => n.type === 'patient');
-  const patientsByDoctor = new Map<string, string[]>();
-  patients.forEach((pat) => {
-    const doctorId = outEdges.get(pat.id)?.find((tid) => network.nodes.find((n) => n.id === tid)?.type === 'doctor');
-    if (doctorId) {
-      const list = patientsByDoctor.get(doctorId) ?? [];
-      list.push(pat.id);
-      patientsByDoctor.set(doctorId, list);
-    }
-  });
-
-  patientsByDoctor.forEach((patIds, doctorId) => {
-    const center = positions[doctorId] ?? { x: MAP_SIZE / 2, y: MAP_SIZE / 2 };
-    const count = patIds.length;
-    const radius = 130;
-    patIds.forEach((id, index) => {
-      const angle = (index / Math.max(count, 1)) * Math.PI * 2 - Math.PI / 2;
-      positions[id] = {
-        x: center.x + Math.cos(angle) * radius,
-        y: center.y + Math.sin(angle) * radius,
-      };
-    });
-  });
-
-  // 处理未找到归属医生的患者
-  patients
-    .filter((pat) => !positions[pat.id])
-    .forEach((pat, index, arr) => {
-      const angle = (index / Math.max(arr.length, 1)) * Math.PI * 2;
-      positions[pat.id] = {
-        x: MAP_SIZE / 2 + Math.cos(angle) * 400,
-        y: MAP_SIZE / 2 + Math.sin(angle) * 400,
-      };
-    });
-
-  return positions;
-}
 
 export function NetworkMapModal({ network, records, selectedAlert, isOpen, onClose }: NetworkMapModalProps) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -149,22 +35,46 @@ export function NetworkMapModal({ network, records, selectedAlert, isOpen, onClo
     '#a78bfa', '#fb923c', '#60a5fa', '#c084fc',
   ];
 
-  const positions = useMemo(() => computeMapPositions(network), [network]);
+  // 使用 Python 脚本基于真实 GeoJSON 投影生成的统一坐标
+  const mapPositions = useMemo(() => network.mapPositions ?? {}, [network]);
 
   useEffect(() => {
     if (!isOpen || !containerRef.current) return;
 
-    // 根据容器实际尺寸缩放地图坐标，保证与 SVG 背景对齐
+    // 将 1000x1000 投影坐标映射到 SVG 实际显示区域（保持与背景地图一致）
     const containerWidth = containerRef.current.clientWidth;
     const containerHeight = containerRef.current.clientHeight;
     const displaySize = Math.min(containerWidth, containerHeight);
     const scale = displaySize / MAP_SIZE;
     const offsetX = (containerWidth - displaySize) / 2;
     const offsetY = (containerHeight - displaySize) / 2;
+    const centerX = containerWidth / 2;
+    const centerY = containerHeight / 2;
 
-    const nodes = network.nodes.map((node) => {
-      const pos = positions[node.id];
-      const baseSize = Math.max(20, Math.min(60, node.value / 100));
+    const getNodePosition = (node: NetworkNode) => {
+      const pos = mapPositions[node.id];
+      if (pos) return { x: pos.x * scale + offsetX, y: pos.y * scale + offsetY };
+      // fallback：医院节点使用独立坐标表，其余居中
+      if (node.type === 'hospital') {
+        const fallback = (hospitalMapCoords as Record<string, { x: number; y: number }>)[node.id];
+        if (fallback) return { x: fallback.x * scale + offsetX, y: fallback.y * scale + offsetY };
+      }
+      return { x: centerX, y: centerY };
+    };
+
+    // 医院节点排在最后渲染，确保标签和描边不被医生/患者覆盖
+    const sortedNodes = [...network.nodes].sort((a, b) => {
+      if (a.type === 'hospital' && b.type !== 'hospital') return 1;
+      if (a.type !== 'hospital' && b.type === 'hospital') return -1;
+      return 0;
+    });
+
+    const nodes = sortedNodes.map((node) => {
+      const pos = getNodePosition(node);
+      const isHospital = node.type === 'hospital';
+      const baseSize = isHospital
+        ? 22
+        : Math.max(10, Math.min(28, node.value / 260));
       const gangColor = node.gangId
         ? gangColors[parseInt(node.gangId.replace('G', '')) % gangColors.length]
         : typeColors[node.type];
@@ -172,18 +82,19 @@ export function NetworkMapModal({ network, records, selectedAlert, isOpen, onClo
       return {
         id: node.id,
         style: {
-          x: pos.x * scale + offsetX,
-          y: pos.y * scale + offsetY,
+          x: pos.x,
+          y: pos.y,
           labelText: node.name,
           labelFill: '#e2e8f0',
-          labelFontSize: node.type === 'hospital' ? 12 : 10,
+          labelFontSize: isHospital ? 11 : 9,
           labelMaxWidth: 120,
-          size: node.type === 'hospital' ? baseSize * 1.3 : baseSize,
+          labelOffsetY: isHospital ? -8 : 0,
+          size: baseSize,
           fill: gangColor,
-          stroke: node.gangId ? '#fff' : gangColor,
-          lineWidth: node.gangId ? 2 : 1,
+          stroke: isHospital ? typeColors.hospital : (node.gangId ? '#fff' : gangColor),
+          lineWidth: isHospital ? 1.5 : (node.gangId ? 2 : 1),
           opacity: 0.95,
-          labelBackground: node.type === 'hospital',
+          labelBackground: isHospital,
           labelBackgroundFill: 'rgba(15,23,42,0.7)',
           labelBackgroundRadius: 4,
           labelBackgroundPadding: [2, 4],
@@ -215,18 +126,8 @@ export function NetworkMapModal({ network, records, selectedAlert, isOpen, onClo
     const graph = new Graph({
       container: containerRef.current,
       data: { nodes, edges },
-      layout: {
-        type: 'force',
-        preventOverlap: true,
-        nodeSize: (d: any) => d.data.baseSize,
-        linkDistance: 90,
-        nodeStrength: -60,
-        edgeStrength: 0.4,
-        damping: 0.85,
-        maxSpeed: 80,
-        // 医院节点不参与力导向，保持地图固定位置
-        nodeFilter: (d: any) => d.data.type !== 'hospital',
-      },
+      // 节点位置由真实地图投影坐标决定，医院固定，医生/患者围绕医院散开；
+      // 不启用自动布局，避免力导向把节点拉离地图真实位置。
       node: {
         state: {
           highlight: {
@@ -262,7 +163,7 @@ export function NetworkMapModal({ network, records, selectedAlert, isOpen, onClo
           type: 'drag-element',
           enable: (event: any) => {
             const id = event.target?.id;
-            // 禁止拖动医院节点（保持地图位置固定）
+            // 禁止拖动医院节点（保持与地图对齐）
             return typeof id === 'string' && !id.startsWith('H');
           },
         },
@@ -285,7 +186,7 @@ export function NetworkMapModal({ network, records, selectedAlert, isOpen, onClo
       graph.destroy();
       graphRef.current = null;
     };
-  }, [isOpen, network, positions]);
+  }, [isOpen, network, mapPositions]);
 
   // 当选中告警变化时高亮路径
   useEffect(() => {
@@ -334,7 +235,7 @@ export function NetworkMapModal({ network, records, selectedAlert, isOpen, onClo
               </div>
               <div>
                 <h2 className="text-lg font-semibold text-slate-100">风险网络地图模式</h2>
-                <p className="text-xs text-slate-400">医院固定于南京市区示意位置 · 医生与患者可拖拽</p>
+                <p className="text-xs text-slate-400">医院固定于南京市区真实位置 · 医生与患者可拖拽</p>
               </div>
             </div>
             <button

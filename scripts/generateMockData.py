@@ -4,6 +4,8 @@
 """
 
 import json
+import math
+import os
 import random
 from datetime import datetime, timedelta
 from collections import defaultdict
@@ -14,6 +16,30 @@ random.seed(42)
 # ==================== 基础数据配置 ====================
 
 DISTRICTS = ["鼓楼区", "玄武区", "秦淮区", "建邺区", "雨花台区", "栖霞区", "江宁区"]
+
+# 高德/天地图 WGS-84 经纬度（用于地图投影定位）
+HOSPITAL_LATLON = {
+    "H001": (118.783042, 32.05618),   # 南京鼓楼医院
+    "H002": (118.766485, 32.049185),  # 江苏省人民医院
+    "H003": (118.78425, 32.017128),   # 南京市第一医院
+    "H004": (118.776193, 32.07234),   # 东南大学附属中大医院
+    "H005": (118.804, 32.004),        # 南京市中医院（秦淮区大明路）
+    "H006": (118.75636, 32.082464),   # 南京医科大学第二附属医院
+    "H007": (118.849124, 31.950736),  # 江宁医院
+    "H008": (118.88064, 32.11352),    # 南京市栖霞区医院
+    "H009": (118.7799, 31.99202),     # 南京市雨花台区中心医院
+    "H010": (118.74496, 32.02103),    # 南京市建邺医院
+}
+
+MAP_SIZE = 1000
+MAP_PADDING = 40
+
+# 南京市区 adcode -> 中文名（datav GeoJSON 中 name 字段可能编码异常，使用 adcode 兜底）
+ADCODE_TO_NAME = {
+    320102: "玄武区", 320104: "秦淮区", 320105: "建邺区", 320106: "鼓楼区",
+    320111: "浦口区", 320113: "栖霞区", 320114: "雨花台区", 320115: "江宁区",
+    320116: "六合区", 320117: "溧水区", 320118: "高淳区",
+}
 
 HOSPITALS = [
     {"id": "H001", "name": "南京鼓楼医院", "level": "三级甲等", "district": "鼓楼区"},
@@ -91,6 +117,86 @@ PRESCRIPTION_TYPES = ["院内", "外配"]
 PATIENTS = [f"P{str(i).zfill(3)}" for i in range(1, 101)]
 
 # ==================== 辅助函数 ====================
+
+def load_nanjing_geojson():
+    """加载真实南京市区 GeoJSON"""
+    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    path = os.path.join(base_dir, "nanjing_geo.json")
+    with open(path, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+
+def extract_district_features(geojson):
+    """过滤出项目关注的 7 个市区"""
+    return [
+        f for f in geojson.get("features", [])
+        if ADCODE_TO_NAME.get(f["properties"]["adcode"]) in DISTRICTS
+    ]
+
+
+def compute_projection(features, width=MAP_SIZE, height=MAP_SIZE, padding=MAP_PADDING):
+    """基于经纬度范围计算等距圆柱投影函数"""
+    all_lons = []
+    all_lats = []
+    for f in features:
+        geom = f["geometry"]
+        rings = []
+        if geom["type"] == "Polygon":
+            rings = geom["coordinates"]
+        elif geom["type"] == "MultiPolygon":
+            for poly in geom["coordinates"]:
+                rings.extend(poly)
+        for ring in rings:
+            for lon, lat in ring:
+                all_lons.append(lon)
+                all_lats.append(lat)
+    min_lon, max_lon = min(all_lons), max(all_lons)
+    min_lat, max_lat = min(all_lats), max(all_lats)
+
+    scale_x = (width - 2 * padding) / (max_lon - min_lon)
+    scale_y = (height - 2 * padding) / (max_lat - min_lat)
+
+    def project(lon, lat):
+        x = padding + (lon - min_lon) * scale_x
+        y = padding + (max_lat - lat) * scale_y
+        return x, y
+
+    return project, (min_lon, max_lon, min_lat, max_lat)
+
+
+def generate_map_paths(features, project):
+    """将 GeoJSON 多边形转换为 SVG path 数据"""
+    districts = []
+    for f in features:
+        adcode = f["properties"]["adcode"]
+        name = ADCODE_TO_NAME.get(adcode, f["properties"].get("name", ""))
+        geom = f["geometry"]
+        rings = []
+        if geom["type"] == "Polygon":
+            rings = geom["coordinates"]
+        elif geom["type"] == "MultiPolygon":
+            for poly in geom["coordinates"]:
+                rings.extend(poly)
+
+        paths = []
+        for ring in rings:
+            d = " ".join([
+                f"{'M' if i == 0 else 'L'}{project(lon, lat)[0]:.2f},{project(lon, lat)[1]:.2f}"
+                for i, (lon, lat) in enumerate(ring)
+            ]) + " Z"
+            paths.append(d)
+
+        # 标签位置使用 GeoJSON 提供的 centroid
+        cx, cy = project(f["properties"]["centroid"][0], f["properties"]["centroid"][1])
+        districts.append({
+            "name": name,
+            "adcode": adcode,
+            "paths": paths,
+            "labelX": round(cx, 2),
+            "labelY": round(cy, 2),
+        })
+    return districts
+
 
 def random_time_in_last_30_days(base_date=None):
     """生成过去 30 天内的随机时间"""
@@ -768,42 +874,47 @@ def generate_alerts(records):
     return alerts
 
 
-def generate_network(records):
-    """生成关系网络数据"""
+def generate_network(records, hospital_map_coords):
+    """生成关系网络数据，并基于真实地图投影计算节点初始坐标"""
     nodes = {}
     edges = []
     edge_map = defaultdict(int)
-    
+    node_hospital = {}  # 记录每个非医院节点所属的医院
+
     # 团伙：按 traceCode 分组（串换药品）和 cross_hospital 分组
     gangs = []
     trace_gangs = defaultdict(set)
     cross_gangs = defaultdict(set)
-    
+
     for record in records:
         # 添加节点
         pid = record["patientId"]
         did = record["doctorId"]
         hid = record["hospitalId"]
-        
+
         if pid not in nodes:
             nodes[pid] = {"id": pid, "name": record["name"], "type": "patient", "value": 0}
         if did not in nodes:
             nodes[did] = {"id": did, "name": record["doctorName"], "type": "doctor", "value": 0}
         if hid not in nodes:
             nodes[hid] = {"id": hid, "name": record["hospitalName"], "type": "hospital", "value": 0}
-        
+
         nodes[pid]["value"] += record["totalAmount"]
         nodes[did]["value"] += record["totalAmount"]
         nodes[hid]["value"] += record["totalAmount"]
-        
+
+        # 记录归属医院
+        node_hospital[pid] = hid
+        node_hospital[did] = hid
+
         # 边：患者-医生
         edge_key = (pid, did)
         edge_map[edge_key] += 1
-        
+
         # 边：医生-医院
         edge_key2 = (did, hid)
         edge_map[edge_key2] += 1
-        
+
         # 团伙识别
         if record["abnormalType"] == "trace_code_abnormal":
             trace_gangs[record["traceCode"]].add(pid)
@@ -814,18 +925,18 @@ def generate_network(records):
             cross_gangs[cross_key].add(pid)
             cross_gangs[cross_key].add(did)
             cross_gangs[cross_key].add(hid)
-    
+
     # 合并团伙
     for members in trace_gangs.values():
         gangs.append(members)
     for members in cross_gangs.values():
         gangs.append(members)
-    
+
     # 只保留成员 >= 3 的团伙，并分配 gangId
     gang_id = 1
     node_gang = {}
     valid_gangs = []
-    
+
     for members in gangs:
         if len(members) >= 3:
             valid_gangs.append(members)
@@ -834,14 +945,41 @@ def generate_network(records):
                 if member not in node_gang:
                     node_gang[member] = f"G{gang_id:03d}"
             gang_id += 1
-    
+
     for node_id, gang in node_gang.items():
         if node_id in nodes:
             nodes[node_id]["gangId"] = gang
-    
+
     for (source, target), value in edge_map.items():
         edges.append({"source": source, "target": target, "value": value})
-    
+
+    # 计算地图投影坐标：医院固定，医生/患者围绕所属医院散开
+    map_positions = {}
+    hospital_doctor_count = defaultdict(int)
+    hospital_patient_count = defaultdict(int)
+    for node_id, node in nodes.items():
+        if node["type"] == "hospital":
+            map_positions[node_id] = hospital_map_coords.get(node_id, {"x": MAP_SIZE / 2, "y": MAP_SIZE / 2})
+        else:
+            hid = node_hospital.get(node_id)
+            if hid and hid in hospital_map_coords:
+                hx, hy = hospital_map_coords[hid]["x"], hospital_map_coords[hid]["y"]
+                angle = random.random() * 2 * math.pi
+                if node["type"] == "doctor":
+                    # 医生在内圈，半径 45-180
+                    hospital_doctor_count[hid] += 1
+                    radius = 45 + (hospital_doctor_count[hid] % 8) * 18 + random.uniform(-8, 8)
+                else:
+                    # 患者在外圈，半径 110-300
+                    hospital_patient_count[hid] += 1
+                    radius = 110 + (hospital_patient_count[hid] % 10) * 20 + random.uniform(-10, 10)
+                map_positions[node_id] = {
+                    "x": round(hx + math.cos(angle) * radius, 2),
+                    "y": round(hy + math.sin(angle) * radius, 2),
+                }
+            else:
+                map_positions[node_id] = {"x": MAP_SIZE / 2, "y": MAP_SIZE / 2}
+
     return {
         "nodes": list(nodes.values()),
         "edges": edges,
@@ -849,7 +987,8 @@ def generate_network(records):
         "gangDetails": [
             {"id": f"G{i+1:03d}", "members": list(members)}
             for i, members in enumerate(valid_gangs)
-        ]
+        ],
+        "mapPositions": map_positions,
     }
 
 
@@ -954,50 +1093,76 @@ def generate_case_analysis(alerts):
 def main():
     """主函数"""
     print("开始生成基金监管天眼 mock 数据...")
-    
+
     # 生成记录
     records, used_trace_codes = generate_all_records()
     print(f"生成记录数：{len(records)}")
-    
+
     # 统计异常类型
     abnormal_count = defaultdict(int)
     for r in records:
         if r["abnormalType"]:
             abnormal_count[r["abnormalType"]] += 1
     print("异常类型分布：", dict(abnormal_count))
-    
+
+    # 加载真实南京市区 GeoJSON 并计算统一投影
+    geojson = load_nanjing_geojson()
+    district_features = extract_district_features(geojson)
+    project, bounds = compute_projection(district_features)
+    print(f"地图投影范围：{bounds}")
+
+    # 生成医院投影坐标
+    hospital_map_coords = {
+        hid: {"x": round(project(lon, lat)[0], 2), "y": round(project(lon, lat)[1], 2)}
+        for hid, (lon, lat) in HOSPITAL_LATLON.items()
+    }
+
+    # 生成 SVG 地图路径
+    district_paths = generate_map_paths(district_features, project)
+
     # 生成衍生数据（注意顺序：network 先生成，再生成 overview）
-    network = generate_network(records)
+    network = generate_network(records, hospital_map_coords)
     overview = generate_overview(records, network["gangs"])
     alerts = generate_alerts(records)
     case_analysis = generate_case_analysis(alerts)
-    
+
     # 检查追溯码异常
     trace_abnormal = {k: v for k, v in used_trace_codes.items() if len(v) > 1}
     print(f"追溯码重复组数：{len(trace_abnormal)}")
-    
+
     # 输出路径
-    import os
     base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     mock_dir = os.path.join(base_dir, "src", "mock")
     os.makedirs(mock_dir, exist_ok=True)
-    
+
     # 写入文件
     with open(os.path.join(mock_dir, "records.json"), "w", encoding="utf-8") as f:
         json.dump(records, f, ensure_ascii=False, indent=2)
-    
+
     with open(os.path.join(mock_dir, "overview.json"), "w", encoding="utf-8") as f:
         json.dump(overview, f, ensure_ascii=False, indent=2)
-    
+
     with open(os.path.join(mock_dir, "alerts.json"), "w", encoding="utf-8") as f:
         json.dump(alerts, f, ensure_ascii=False, indent=2)
-    
+
     with open(os.path.join(mock_dir, "network.json"), "w", encoding="utf-8") as f:
         json.dump(network, f, ensure_ascii=False, indent=2)
-    
+
     with open(os.path.join(mock_dir, "caseAnalysis.json"), "w", encoding="utf-8") as f:
         json.dump(case_analysis, f, ensure_ascii=False, indent=2)
-    
+
+    # 写入地图资源
+    with open(os.path.join(mock_dir, "nanjingMapPaths.json"), "w", encoding="utf-8") as f:
+        json.dump({
+            "width": MAP_SIZE,
+            "height": MAP_SIZE,
+            "bounds": bounds,
+            "districts": district_paths,
+        }, f, ensure_ascii=False, indent=2)
+
+    with open(os.path.join(mock_dir, "hospitalMapCoords.json"), "w", encoding="utf-8") as f:
+        json.dump(hospital_map_coords, f, ensure_ascii=False, indent=2)
+
     print(f"数据已写入：{mock_dir}")
     print("生成完成！")
 

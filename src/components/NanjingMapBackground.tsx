@@ -1,14 +1,36 @@
+import mapData from '../mock/nanjingMapPaths.json';
+
+const COLORS = [
+  'rgba(34,211,238,0.06)',
+  'rgba(59,130,246,0.05)',
+  'rgba(168,85,247,0.05)',
+  'rgba(16,185,129,0.05)',
+  'rgba(245,158,11,0.05)',
+  'rgba(244,63,94,0.05)',
+  'rgba(14,165,233,0.05)',
+];
+
+const STROKES = [
+  'rgba(34,211,238,0.35)',
+  'rgba(59,130,246,0.35)',
+  'rgba(168,85,247,0.35)',
+  'rgba(16,185,129,0.35)',
+  'rgba(245,158,11,0.35)',
+  'rgba(244,63,94,0.35)',
+  'rgba(14,165,233,0.35)',
+];
+
 /**
- * 南京市区示意地图背景（科技风 SVG）
- *
- * 说明：本组件为示意性简图，非精确地理地图。
- * 坐标系 viewBox="0 0 1000 1000"，医院坐标映射需与本组件保持一致。
+ * 南京市区真实地图背景（基于 GeoJSON 等距圆柱投影）
+ * 坐标系 viewBox="0 0 1000 1000"，与 NetworkMapModal 使用同一投影坐标系
  */
 export function NanjingMapBackground() {
+  const { width, height, districts } = mapData;
+
   return (
     <svg
       className="absolute inset-0 w-full h-full"
-      viewBox="0 0 1000 1000"
+      viewBox={`0 0 ${width} ${height}`}
       preserveAspectRatio="xMidYMid meet"
       xmlns="http://www.w3.org/2000/svg"
     >
@@ -27,106 +49,43 @@ export function NanjingMapBackground() {
       </defs>
 
       {/* 背景网格 */}
-      <rect width="1000" height="1000" fill="url(#grid)" />
-      <rect width="1000" height="1000" fill="url(#mapGlow)" />
+      <rect width={width} height={height} fill="url(#grid)" />
+      <rect width={width} height={height} fill="url(#mapGlow)" />
 
-      {/* 外轮廓 */}
-      <path
-        d="M 80 180 L 720 120 L 920 300 L 940 960 L 120 940 Z"
-        fill="none"
-        stroke="rgba(34,211,238,0.15)"
-        strokeWidth="2"
-        strokeDasharray="8 6"
-      />
-
-      {/* 鼓楼区 */}
-      <polygon
-        points="200,200 450,150 480,350 320,420 180,350"
-        fill="rgba(34,211,238,0.06)"
-        stroke="rgba(34,211,238,0.35)"
-        strokeWidth="1.5"
-        filter="url(#districtGlow)"
-      />
-      <text x="315" y="285" fill="rgba(226,232,240,0.55)" fontSize="14" textAnchor="middle">
-        鼓楼区
-      </text>
-
-      {/* 玄武区 */}
-      <polygon
-        points="450,150 720,180 700,380 520,350 480,350"
-        fill="rgba(59,130,246,0.05)"
-        stroke="rgba(59,130,246,0.35)"
-        strokeWidth="1.5"
-        filter="url(#districtGlow)"
-      />
-      <text x="585" y="275" fill="rgba(226,232,240,0.55)" fontSize="14" textAnchor="middle">
-        玄武区
-      </text>
-
-      {/* 秦淮区 */}
-      <polygon
-        points="320,420 480,350 520,350 700,380 620,550 400,580 300,520"
-        fill="rgba(168,85,247,0.05)"
-        stroke="rgba(168,85,247,0.35)"
-        strokeWidth="1.5"
-        filter="url(#districtGlow)"
-      />
-      <text x="490" y="470" fill="rgba(226,232,240,0.55)" fontSize="14" textAnchor="middle">
-        秦淮区
-      </text>
-
-      {/* 建邺区 */}
-      <polygon
-        points="100,420 320,420 300,520 400,580 380,750 120,700"
-        fill="rgba(16,185,129,0.05)"
-        stroke="rgba(16,185,129,0.35)"
-        strokeWidth="1.5"
-        filter="url(#districtGlow)"
-      />
-      <text x="245" y="585" fill="rgba(226,232,240,0.55)" fontSize="14" textAnchor="middle">
-        建邺区
-      </text>
-
-      {/* 雨花台区 */}
-      <polygon
-        points="400,580 620,550 650,780 420,820 380,750"
-        fill="rgba(245,158,11,0.05)"
-        stroke="rgba(245,158,11,0.35)"
-        strokeWidth="1.5"
-        filter="url(#districtGlow)"
-      />
-      <text x="515" y="685" fill="rgba(226,232,240,0.55)" fontSize="14" textAnchor="middle">
-        雨花台区
-      </text>
-
-      {/* 栖霞区 */}
-      <polygon
-        points="700,380 900,320 880,600 650,780 620,550"
-        fill="rgba(244,63,94,0.05)"
-        stroke="rgba(244,63,94,0.35)"
-        strokeWidth="1.5"
-        filter="url(#districtGlow)"
-      />
-      <text x="760" y="540" fill="rgba(226,232,240,0.55)" fontSize="14" textAnchor="middle">
-        栖霞区
-      </text>
-
-      {/* 江宁区 */}
-      <polygon
-        points="120,700 380,750 420,820 650,780 880,600 920,950 150,920"
-        fill="rgba(14,165,233,0.05)"
-        stroke="rgba(14,165,233,0.35)"
-        strokeWidth="1.5"
-        filter="url(#districtGlow)"
-      />
-      <text x="540" y="870" fill="rgba(226,232,240,0.55)" fontSize="14" textAnchor="middle">
-        江宁区
-      </text>
+      {/* 真实区划轮廓 */}
+      {districts.map((district, index) => {
+        const color = COLORS[index % COLORS.length];
+        const stroke = STROKES[index % STROKES.length];
+        return (
+          <g key={district.adcode}>
+            {district.paths.map((d, i) => (
+              <path
+                key={i}
+                d={d}
+                fill={color}
+                stroke={stroke}
+                strokeWidth="1.5"
+                filter="url(#districtGlow)"
+              />
+            ))}
+            <text
+              x={district.labelX}
+              y={district.labelY}
+              fill="rgba(226,232,240,0.6)"
+              fontSize="13"
+              fontWeight="500"
+              textAnchor="middle"
+              style={{ pointerEvents: 'none', textShadow: '0 0 4px rgba(0,0,0,0.6)' }}
+            >
+              {district.name}
+            </text>
+          </g>
+        );
+      })}
 
       {/* 装饰性经纬线 */}
-      <line x1="100" y1="500" x2="900" y2="500" stroke="rgba(34,211,238,0.1)" strokeWidth="1" strokeDasharray="4 4" />
-      <line x1="500" y1="100" x2="500" y2="900" stroke="rgba(34,211,238,0.1)" strokeWidth="1" strokeDasharray="4 4" />
-
+      <line x1="100" y1={height / 2} x2={width - 100} y2={height / 2} stroke="rgba(34,211,238,0.1)" strokeWidth="1" strokeDasharray="4 4" />
+      <line x1={width / 2} y1="100" x2={width / 2} y2={height - 100} stroke="rgba(34,211,238,0.1)" strokeWidth="1" strokeDasharray="4 4" />
     </svg>
   );
 }

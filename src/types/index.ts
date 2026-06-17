@@ -96,6 +96,12 @@ export interface NetworkEdge {
   value: number;
 }
 
+/** 地图投影坐标 */
+export interface MapPosition {
+  x: number;
+  y: number;
+}
+
 /** 关系网络数据 */
 export interface NetworkData {
   nodes: NetworkNode[];
@@ -105,6 +111,7 @@ export interface NetworkData {
     id: string;
     members: string[];
   }>;
+  mapPositions?: Record<string, MapPosition>;
 }
 
 /** 单个 Agent 研判结果 */
