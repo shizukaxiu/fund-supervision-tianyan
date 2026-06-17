@@ -1,0 +1,2458 @@
+{
+  "nodes": [
+    {
+      "id": "P072",
+      "name": "王**",
+      "type": "patient",
+      "value": 471.59000000000003
+    },
+    {
+      "id": "D005",
+      "name": "陈医生",
+      "type": "doctor",
+      "value": 2246.33
+    },
+    {
+      "id": "H009",
+      "name": "南京市雨花台区中心医院",
+      "type": "hospital",
+      "value": 6414.0,
+      "gangId": "G005"
+    },
+    {
+      "id": "P041",
+      "name": "赵**",
+      "type": "patient",
+      "value": 95.27
+    },
+    {
+      "id": "D015",
+      "name": "胡医生",
+      "type": "doctor",
+      "value": 639.43
+    },
+    {
+      "id": "H004",
+      "name": "东南大学附属中大医院",
+      "type": "hospital",
+      "value": 7118.34,
+      "gangId": "G002"
+    },
+    {
+      "id": "P007",
+      "name": "吴**",
+      "type": "patient",
+      "value": 212.05
+    },
+    {
+      "id": "D025",
+      "name": "唐医生",
+      "type": "doctor",
+      "value": 2981.33,
+      "gangId": "G008"
+    },
+    {
+      "id": "H005",
+      "name": "南京市中医院",
+      "type": "hospital",
+      "value": 3308.18,
+      "gangId": "G005"
+    },
+    {
+      "id": "P039",
+      "name": "孙**",
+      "type": "patient",
+      "value": 1245.9199999999998
+    },
+    {
+      "id": "D020",
+      "name": "罗医生",
+      "type": "doctor",
+      "value": 1498.56
+    },
+    {
+      "id": "P100",
+      "name": "钱**",
+      "type": "patient",
+      "value": 530.63
+    },
+    {
+      "id": "D007",
+      "name": "黄医生",
+      "type": "doctor",
+      "value": 2096.94
+    },
+    {
+      "id": "P013",
+      "name": "钱**",
+      "type": "patient",
+      "value": 1014.0
+    },
+    {
+      "id": "D022",
+      "name": "梁医生",
+      "type": "doctor",
+      "value": 1686.2399999999998,
+      "gangId": "G003"
+    },
+    {
+      "id": "P047",
+      "name": "孙**",
+      "type": "patient",
+      "value": 523.43
+    },
+    {
+      "id": "D023",
+      "name": "谢医生",
+      "type": "doctor",
+      "value": 3688.2
+    },
+    {
+      "id": "H010",
+      "name": "南京市建邺医院",
+      "type": "hospital",
+      "value": 4720.900000000001,
+      "gangId": "G006"
+    },
+    {
+      "id": "P037",
+      "name": "李**",
+      "type": "patient",
+      "value": 635.18
+    },
+    {
+      "id": "D027",
+      "name": "韩医生",
+      "type": "doctor",
+      "value": 1358.2600000000002,
+      "gangId": "G008"
+    },
+    {
+      "id": "H007",
+      "name": "江宁医院",
+      "type": "hospital",
+      "value": 4110.280000000001,
+      "gangId": "G006"
+    },
+    {
+      "id": "P026",
+      "name": "孙**",
+      "type": "patient",
+      "value": 579.51,
+      "gangId": "G001"
+    },
+    {
+      "id": "D003",
+      "name": "张医生",
+      "type": "doctor",
+      "value": 1189.72,
+      "gangId": "G001"
+    },
+    {
+      "id": "H006",
+      "name": "南京医科大学第二附属医院",
+      "type": "hospital",
+      "value": 4713.760000000001,
+      "gangId": "G001"
+    },
+    {
+      "id": "P071",
+      "name": "孙**",
+      "type": "patient",
+      "value": 179.46
+    },
+    {
+      "id": "D018",
+      "name": "高医生",
+      "type": "doctor",
+      "value": 1744.44,
+      "gangId": "G002"
+    },
+    {
+      "id": "P091",
+      "name": "吴**",
+      "type": "patient",
+      "value": 544.9699999999999
+    },
+    {
+      "id": "D030",
+      "name": "曹医生",
+      "type": "doctor",
+      "value": 2381.07,
+      "gangId": "G006"
+    },
+    {
+      "id": "H002",
+      "name": "江苏省人民医院",
+      "type": "hospital",
+      "value": 5864.21,
+      "gangId": "G007"
+    },
+    {
+      "id": "P088",
+      "name": "赵**",
+      "type": "patient",
+      "value": 327.6,
+      "gangId": "G001"
+    },
+    {
+      "id": "D021",
+      "name": "郑医生",
+      "type": "doctor",
+      "value": 964.46,
+      "gangId": "G005"
+    },
+    {
+      "id": "P083",
+      "name": "孙**",
+      "type": "patient",
+      "value": 1190.3
+    },
+    {
+      "id": "P027",
+      "name": "周**",
+      "type": "patient",
+      "value": 508.17,
+      "gangId": "G001"
+    },
+    {
+      "id": "P092",
+      "name": "吴**",
+      "type": "patient",
+      "value": 203.5
+    },
+    {
+      "id": "D014",
+      "name": "朱医生",
+      "type": "doctor",
+      "value": 1307.08
+    },
+    {
+      "id": "P044",
+      "name": "吴**",
+      "type": "patient",
+      "value": 157.37
+    },
+    {
+      "id": "D013",
+      "name": "马医生",
+      "type": "doctor",
+      "value": 1832.79
+    },
+    {
+      "id": "H008",
+      "name": "南京市栖霞区医院",
+      "type": "hospital",
+      "value": 3564.36,
+      "gangId": "G007"
+    },
+    {
+      "id": "P008",
+      "name": "郑**",
+      "type": "patient",
+      "value": 1882.61
+    },
+    {
+      "id": "D028",
+      "name": "冯医生",
+      "type": "doctor",
+      "value": 1751.76
+    },
+    {
+      "id": "P085",
+      "name": "王**",
+      "type": "patient",
+      "value": 353.85
+    },
+    {
+      "id": "D008",
+      "name": "赵医生",
+      "type": "doctor",
+      "value": 1474.79
+    },
+    {
+      "id": "P054",
+      "name": "钱**",
+      "type": "patient",
+      "value": 979.53
+    },
+    {
+      "id": "D019",
+      "name": "林医生",
+      "type": "doctor",
+      "value": 1809.9600000000003
+    },
+    {
+      "id": "P042",
+      "name": "钱**",
+      "type": "patient",
+      "value": 1921.1100000000001
+    },
+    {
+      "id": "P061",
+      "name": "孙**",
+      "type": "patient",
+      "value": 466.22
+    },
+    {
+      "id": "D012",
+      "name": "孙医生",
+      "type": "doctor",
+      "value": 557.1
+    },
+    {
+      "id": "P016",
+      "name": "孙**",
+      "type": "patient",
+      "value": 1239.59
+    },
+    {
+      "id": "P030",
+      "name": "赵**",
+      "type": "patient",
+      "value": 182.01
+    },
+    {
+      "id": "P082",
+      "name": "郑**",
+      "type": "patient",
+      "value": 772.03
+    },
+    {
+      "id": "D001",
+      "name": "王医生",
+      "type": "doctor",
+      "value": 1197.53
+    },
+    {
+      "id": "P056",
+      "name": "孙**",
+      "type": "patient",
+      "value": 204.26
+    },
+    {
+      "id": "D010",
+      "name": "吴医生",
+      "type": "doctor",
+      "value": 2398.89,
+      "gangId": "G007"
+    },
+    {
+      "id": "H001",
+      "name": "南京鼓楼医院",
+      "type": "hospital",
+      "value": 6348.040000000001,
+      "gangId": "G008"
+    },
+    {
+      "id": "P038",
+      "name": "王**",
+      "type": "patient",
+      "value": 413.1
+    },
+    {
+      "id": "D026",
+      "name": "许医生",
+      "type": "doctor",
+      "value": 1428.1099999999997,
+      "gangId": "G004"
+    },
+    {
+      "id": "P076",
+      "name": "郑**",
+      "type": "patient",
+      "value": 927.3299999999999,
+      "gangId": "G003"
+    },
+    {
+      "id": "H003",
+      "name": "南京市第一医院",
+      "type": "hospital",
+      "value": 2756.48,
+      "gangId": "G003"
+    },
+    {
+      "id": "P049",
+      "name": "李**",
+      "type": "patient",
+      "value": 787.19
+    },
+    {
+      "id": "P005",
+      "name": "郑**",
+      "type": "patient",
+      "value": 435.93
+    },
+    {
+      "id": "D017",
+      "name": "何医生",
+      "type": "doctor",
+      "value": 741.47
+    },
+    {
+      "id": "D016",
+      "name": "郭医生",
+      "type": "doctor",
+      "value": 2257.6299999999997,
+      "gangId": "G005"
+    },
+    {
+      "id": "P031",
+      "name": "郑**",
+      "type": "patient",
+      "value": 1470.28
+    },
+    {
+      "id": "P028",
+      "name": "吴**",
+      "type": "patient",
+      "value": 960.53
+    },
+    {
+      "id": "P024",
+      "name": "王**",
+      "type": "patient",
+      "value": 510.84000000000003
+    },
+    {
+      "id": "P034",
+      "name": "孙**",
+      "type": "patient",
+      "value": 931.14
+    },
+    {
+      "id": "P057",
+      "name": "赵**",
+      "type": "patient",
+      "value": 1159.4,
+      "gangId": "G008"
+    },
+    {
+      "id": "D024",
+      "name": "宋医生",
+      "type": "doctor",
+      "value": 1539.24
+    },
+    {
+      "id": "P063",
+      "name": "钱**",
+      "type": "patient",
+      "value": 175.62
+    },
+    {
+      "id": "P064",
+      "name": "孙**",
+      "type": "patient",
+      "value": 863.97
+    },
+    {
+      "id": "P066",
+      "name": "孙**",
+      "type": "patient",
+      "value": 551.78
+    },
+    {
+      "id": "P004",
+      "name": "郑**",
+      "type": "patient",
+      "value": 617.18
+    },
+    {
+      "id": "P002",
+      "name": "钱**",
+      "type": "patient",
+      "value": 165.83
+    },
+    {
+      "id": "P060",
+      "name": "钱**",
+      "type": "patient",
+      "value": 64.9
+    },
+    {
+      "id": "P055",
+      "name": "李**",
+      "type": "patient",
+      "value": 620.55,
+      "gangId": "G005"
+    },
+    {
+      "id": "P036",
+      "name": "钱**",
+      "type": "patient",
+      "value": 468.59000000000003,
+      "gangId": "G002"
+    },
+    {
+      "id": "D004",
+      "name": "刘医生",
+      "type": "doctor",
+      "value": 2078.8999999999996
+    },
+    {
+      "id": "P081",
+      "name": "赵**",
+      "type": "patient",
+      "value": 950.6800000000001,
+      "gangId": "G006"
+    },
+    {
+      "id": "D002",
+      "name": "李医生",
+      "type": "doctor",
+      "value": 499.75,
+      "gangId": "G006"
+    },
+    {
+      "id": "P094",
+      "name": "李**",
+      "type": "patient",
+      "value": 1860.5600000000002
+    },
+    {
+      "id": "P074",
+      "name": "王**",
+      "type": "patient",
+      "value": 796.93
+    },
+    {
+      "id": "D009",
+      "name": "周医生",
+      "type": "doctor",
+      "value": 3010.29,
+      "gangId": "G005"
+    },
+    {
+      "id": "P046",
+      "name": "钱**",
+      "type": "patient",
+      "value": 402.07
+    },
+    {
+      "id": "P084",
+      "name": "钱**",
+      "type": "patient",
+      "value": 564.07
+    },
+    {
+      "id": "P053",
+      "name": "吴**",
+      "type": "patient",
+      "value": 487.61
+    },
+    {
+      "id": "P068",
+      "name": "周**",
+      "type": "patient",
+      "value": 793.2199999999999
+    },
+    {
+      "id": "P050",
+      "name": "周**",
+      "type": "patient",
+      "value": 842.36
+    },
+    {
+      "id": "P035",
+      "name": "吴**",
+      "type": "patient",
+      "value": 166.19
+    },
+    {
+      "id": "P048",
+      "name": "王**",
+      "type": "patient",
+      "value": 178.08
+    },
+    {
+      "id": "P022",
+      "name": "王**",
+      "type": "patient",
+      "value": 747.04
+    },
+    {
+      "id": "P090",
+      "name": "李**",
+      "type": "patient",
+      "value": 405.86
+    },
+    {
+      "id": "P020",
+      "name": "周**",
+      "type": "patient",
+      "value": 149.68,
+      "gangId": "G002"
+    },
+    {
+      "id": "P029",
+      "name": "吴**",
+      "type": "patient",
+      "value": 749.62
+    },
+    {
+      "id": "P009",
+      "name": "钱**",
+      "type": "patient",
+      "value": 333.33
+    },
+    {
+      "id": "P089",
+      "name": "王**",
+      "type": "patient",
+      "value": 944.93,
+      "gangId": "G003"
+    },
+    {
+      "id": "P052",
+      "name": "吴**",
+      "type": "patient",
+      "value": 320.47
+    },
+    {
+      "id": "D029",
+      "name": "邓医生",
+      "type": "doctor",
+      "value": 1337.7
+    },
+    {
+      "id": "D011",
+      "name": "徐医生",
+      "type": "doctor",
+      "value": 474.79
+    },
+    {
+      "id": "P021",
+      "name": "赵**",
+      "type": "patient",
+      "value": 344.97,
+      "gangId": "G002"
+    },
+    {
+      "id": "P019",
+      "name": "王**",
+      "type": "patient",
+      "value": 570.49,
+      "gangId": "G004"
+    },
+    {
+      "id": "P077",
+      "name": "王**",
+      "type": "patient",
+      "value": 368.35
+    },
+    {
+      "id": "P087",
+      "name": "吴**",
+      "type": "patient",
+      "value": 442.57
+    },
+    {
+      "id": "P010",
+      "name": "王**",
+      "type": "patient",
+      "value": 363.77
+    },
+    {
+      "id": "P095",
+      "name": "王**",
+      "type": "patient",
+      "value": 694.71
+    },
+    {
+      "id": "P012",
+      "name": "赵**",
+      "type": "patient",
+      "value": 197.44
+    },
+    {
+      "id": "P051",
+      "name": "吴**",
+      "type": "patient",
+      "value": 376.13
+    },
+    {
+      "id": "P099",
+      "name": "钱**",
+      "type": "patient",
+      "value": 321.56
+    },
+    {
+      "id": "P073",
+      "name": "钱**",
+      "type": "patient",
+      "value": 372.6
+    },
+    {
+      "id": "P001",
+      "name": "周**",
+      "type": "patient",
+      "value": 158.08
+    },
+    {
+      "id": "D006",
+      "name": "杨医生",
+      "type": "doctor",
+      "value": 745.7900000000001
+    },
+    {
+      "id": "P079",
+      "name": "孙**",
+      "type": "patient",
+      "value": 1134.93,
+      "gangId": "G004"
+    },
+    {
+      "id": "P062",
+      "name": "孙**",
+      "type": "patient",
+      "value": 1502.5
+    },
+    {
+      "id": "P025",
+      "name": "李**",
+      "type": "patient",
+      "value": 210.99
+    },
+    {
+      "id": "P017",
+      "name": "孙**",
+      "type": "patient",
+      "value": 331.15
+    },
+    {
+      "id": "P045",
+      "name": "李**",
+      "type": "patient",
+      "value": 338.08
+    },
+    {
+      "id": "P033",
+      "name": "郑**",
+      "type": "patient",
+      "value": 79.73
+    },
+    {
+      "id": "P097",
+      "name": "王**",
+      "type": "patient",
+      "value": 338.58
+    },
+    {
+      "id": "P032",
+      "name": "吴**",
+      "type": "patient",
+      "value": 298.77
+    },
+    {
+      "id": "P003",
+      "name": "吴**",
+      "type": "patient",
+      "value": 549.94
+    },
+    {
+      "id": "P086",
+      "name": "郑**",
+      "type": "patient",
+      "value": 99.25
+    },
+    {
+      "id": "P059",
+      "name": "周**",
+      "type": "patient",
+      "value": 161.58
+    },
+    {
+      "id": "P014",
+      "name": "孙**",
+      "type": "patient",
+      "value": 155.19
+    },
+    {
+      "id": "P006",
+      "name": "吴**",
+      "type": "patient",
+      "value": 971.84
+    },
+    {
+      "id": "P023",
+      "name": "周**",
+      "type": "patient",
+      "value": 298.33
+    }
+  ],
+  "edges": [
+    {
+      "source": "P072",
+      "target": "D005",
+      "value": 1
+    },
+    {
+      "source": "D005",
+      "target": "H009",
+      "value": 2
+    },
+    {
+      "source": "P041",
+      "target": "D015",
+      "value": 1
+    },
+    {
+      "source": "D015",
+      "target": "H004",
+      "value": 1
+    },
+    {
+      "source": "P007",
+      "target": "D025",
+      "value": 1
+    },
+    {
+      "source": "D025",
+      "target": "H005",
+      "value": 1
+    },
+    {
+      "source": "P039",
+      "target": "D020",
+      "value": 1
+    },
+    {
+      "source": "D020",
+      "target": "H009",
+      "value": 1
+    },
+    {
+      "source": "P100",
+      "target": "D007",
+      "value": 1
+    },
+    {
+      "source": "D007",
+      "target": "H004",
+      "value": 2
+    },
+    {
+      "source": "P013",
+      "target": "D022",
+      "value": 3
+    },
+    {
+      "source": "D022",
+      "target": "H009",
+      "value": 1
+    },
+    {
+      "source": "P047",
+      "target": "D023",
+      "value": 1
+    },
+    {
+      "source": "D023",
+      "target": "H010",
+      "value": 2
+    },
+    {
+      "source": "P037",
+      "target": "D027",
+      "value": 2
+    },
+    {
+      "source": "D027",
+      "target": "H007",
+      "value": 2
+    },
+    {
+      "source": "P026",
+      "target": "D003",
+      "value": 1
+    },
+    {
+      "source": "D003",
+      "target": "H006",
+      "value": 3
+    },
+    {
+      "source": "P071",
+      "target": "D018",
+      "value": 1
+    },
+    {
+      "source": "D018",
+      "target": "H007",
+      "value": 1
+    },
+    {
+      "source": "P091",
+      "target": "D030",
+      "value": 1
+    },
+    {
+      "source": "D030",
+      "target": "H002",
+      "value": 1
+    },
+    {
+      "source": "P088",
+      "target": "D021",
+      "value": 1
+    },
+    {
+      "source": "D021",
+      "target": "H002",
+      "value": 1
+    },
+    {
+      "source": "P083",
+      "target": "D003",
+      "value": 1
+    },
+    {
+      "source": "D003",
+      "target": "H010",
+      "value": 1
+    },
+    {
+      "source": "P027",
+      "target": "D003",
+      "value": 1
+    },
+    {
+      "source": "P092",
+      "target": "D014",
+      "value": 1
+    },
+    {
+      "source": "D014",
+      "target": "H005",
+      "value": 1
+    },
+    {
+      "source": "P044",
+      "target": "D013",
+      "value": 1
+    },
+    {
+      "source": "D013",
+      "target": "H008",
+      "value": 1
+    },
+    {
+      "source": "P008",
+      "target": "D028",
+      "value": 1
+    },
+    {
+      "source": "D028",
+      "target": "H008",
+      "value": 1
+    },
+    {
+      "source": "P085",
+      "target": "D008",
+      "value": 1
+    },
+    {
+      "source": "D008",
+      "target": "H009",
+      "value": 1
+    },
+    {
+      "source": "P088",
+      "target": "D003",
+      "value": 1
+    },
+    {
+      "source": "P054",
+      "target": "D019",
+      "value": 1
+    },
+    {
+      "source": "D019",
+      "target": "H004",
+      "value": 1
+    },
+    {
+      "source": "P037",
+      "target": "D007",
+      "value": 1
+    },
+    {
+      "source": "D007",
+      "target": "H002",
+      "value": 2
+    },
+    {
+      "source": "P042",
+      "target": "D025",
+      "value": 1
+    },
+    {
+      "source": "D025",
+      "target": "H004",
+      "value": 4
+    },
+    {
+      "source": "P061",
+      "target": "D012",
+      "value": 1
+    },
+    {
+      "source": "D012",
+      "target": "H004",
+      "value": 1
+    },
+    {
+      "source": "P016",
+      "target": "D005",
+      "value": 1
+    },
+    {
+      "source": "P030",
+      "target": "D019",
+      "value": 1
+    },
+    {
+      "source": "D019",
+      "target": "H007",
+      "value": 1
+    },
+    {
+      "source": "P082",
+      "target": "D001",
+      "value": 1
+    },
+    {
+      "source": "D001",
+      "target": "H002",
+      "value": 2
+    },
+    {
+      "source": "P056",
+      "target": "D027",
+      "value": 1
+    },
+    {
+      "source": "D027",
+      "target": "H004",
+      "value": 1
+    },
+    {
+      "source": "P039",
+      "target": "D010",
+      "value": 1
+    },
+    {
+      "source": "D010",
+      "target": "H001",
+      "value": 2
+    },
+    {
+      "source": "P038",
+      "target": "D026",
+      "value": 1
+    },
+    {
+      "source": "D026",
+      "target": "H006",
+      "value": 3
+    },
+    {
+      "source": "P076",
+      "target": "D025",
+      "value": 1
+    },
+    {
+      "source": "D025",
+      "target": "H003",
+      "value": 1
+    },
+    {
+      "source": "P049",
+      "target": "D014",
+      "value": 1
+    },
+    {
+      "source": "D014",
+      "target": "H001",
+      "value": 2
+    },
+    {
+      "source": "D022",
+      "target": "H002",
+      "value": 3
+    },
+    {
+      "source": "P083",
+      "target": "D005",
+      "value": 1
+    },
+    {
+      "source": "D005",
+      "target": "H007",
+      "value": 2
+    },
+    {
+      "source": "P005",
+      "target": "D017",
+      "value": 1
+    },
+    {
+      "source": "D017",
+      "target": "H009",
+      "value": 1
+    },
+    {
+      "source": "P100",
+      "target": "D016",
+      "value": 1
+    },
+    {
+      "source": "D016",
+      "target": "H002",
+      "value": 1
+    },
+    {
+      "source": "P082",
+      "target": "D003",
+      "value": 1
+    },
+    {
+      "source": "D003",
+      "target": "H001",
+      "value": 1
+    },
+    {
+      "source": "P031",
+      "target": "D025",
+      "value": 1
+    },
+    {
+      "source": "D025",
+      "target": "H002",
+      "value": 1
+    },
+    {
+      "source": "P028",
+      "target": "D025",
+      "value": 1
+    },
+    {
+      "source": "D025",
+      "target": "H006",
+      "value": 1
+    },
+    {
+      "source": "P031",
+      "target": "D010",
+      "value": 1
+    },
+    {
+      "source": "D010",
+      "target": "H003",
+      "value": 1
+    },
+    {
+      "source": "P024",
+      "target": "D013",
+      "value": 1
+    },
+    {
+      "source": "D013",
+      "target": "H009",
+      "value": 2
+    },
+    {
+      "source": "P031",
+      "target": "D016",
+      "value": 1
+    },
+    {
+      "source": "D016",
+      "target": "H007",
+      "value": 1
+    },
+    {
+      "source": "P034",
+      "target": "D025",
+      "value": 1
+    },
+    {
+      "source": "P057",
+      "target": "D024",
+      "value": 1
+    },
+    {
+      "source": "D024",
+      "target": "H006",
+      "value": 2
+    },
+    {
+      "source": "P063",
+      "target": "D020",
+      "value": 1
+    },
+    {
+      "source": "D020",
+      "target": "H010",
+      "value": 1
+    },
+    {
+      "source": "P064",
+      "target": "D028",
+      "value": 8
+    },
+    {
+      "source": "D028",
+      "target": "H004",
+      "value": 8
+    },
+    {
+      "source": "P066",
+      "target": "D026",
+      "value": 1
+    },
+    {
+      "source": "D026",
+      "target": "H004",
+      "value": 1
+    },
+    {
+      "source": "P004",
+      "target": "D016",
+      "value": 1
+    },
+    {
+      "source": "D016",
+      "target": "H010",
+      "value": 4
+    },
+    {
+      "source": "P083",
+      "target": "D007",
+      "value": 1
+    },
+    {
+      "source": "P002",
+      "target": "D014",
+      "value": 1
+    },
+    {
+      "source": "D014",
+      "target": "H003",
+      "value": 1
+    },
+    {
+      "source": "P060",
+      "target": "D019",
+      "value": 1
+    },
+    {
+      "source": "D019",
+      "target": "H006",
+      "value": 1
+    },
+    {
+      "source": "P055",
+      "target": "D016",
+      "value": 1
+    },
+    {
+      "source": "D016",
+      "target": "H005",
+      "value": 2
+    },
+    {
+      "source": "P036",
+      "target": "D004",
+      "value": 1
+    },
+    {
+      "source": "D004",
+      "target": "H004",
+      "value": 2
+    },
+    {
+      "source": "P081",
+      "target": "D002",
+      "value": 1
+    },
+    {
+      "source": "D002",
+      "target": "H010",
+      "value": 2
+    },
+    {
+      "source": "P076",
+      "target": "D003",
+      "value": 1
+    },
+    {
+      "source": "D003",
+      "target": "H008",
+      "value": 1
+    },
+    {
+      "source": "P094",
+      "target": "D004",
+      "value": 1
+    },
+    {
+      "source": "D004",
+      "target": "H003",
+      "value": 2
+    },
+    {
+      "source": "P094",
+      "target": "D014",
+      "value": 1
+    },
+    {
+      "source": "D014",
+      "target": "H006",
+      "value": 2
+    },
+    {
+      "source": "P072",
+      "target": "D027",
+      "value": 1
+    },
+    {
+      "source": "P074",
+      "target": "D009",
+      "value": 1
+    },
+    {
+      "source": "D009",
+      "target": "H001",
+      "value": 2
+    },
+    {
+      "source": "P016",
+      "target": "D008",
+      "value": 1
+    },
+    {
+      "source": "D008",
+      "target": "H001",
+      "value": 1
+    },
+    {
+      "source": "P046",
+      "target": "D014",
+      "value": 1
+    },
+    {
+      "source": "P055",
+      "target": "D009",
+      "value": 1
+    },
+    {
+      "source": "D009",
+      "target": "H009",
+      "value": 1
+    },
+    {
+      "source": "P054",
+      "target": "D015",
+      "value": 1
+    },
+    {
+      "source": "D015",
+      "target": "H010",
+      "value": 1
+    },
+    {
+      "source": "P004",
+      "target": "D019",
+      "value": 1
+    },
+    {
+      "source": "D019",
+      "target": "H005",
+      "value": 1
+    },
+    {
+      "source": "P084",
+      "target": "D025",
+      "value": 1
+    },
+    {
+      "source": "P053",
+      "target": "D022",
+      "value": 1
+    },
+    {
+      "source": "D022",
+      "target": "H006",
+      "value": 1
+    },
+    {
+      "source": "P091",
+      "target": "D001",
+      "value": 1
+    },
+    {
+      "source": "P094",
+      "target": "D023",
+      "value": 2
+    },
+    {
+      "source": "D023",
+      "target": "H004",
+      "value": 3
+    },
+    {
+      "source": "P057",
+      "target": "D027",
+      "value": 1
+    },
+    {
+      "source": "D027",
+      "target": "H010",
+      "value": 1
+    },
+    {
+      "source": "P081",
+      "target": "D030",
+      "value": 1
+    },
+    {
+      "source": "D030",
+      "target": "H007",
+      "value": 1
+    },
+    {
+      "source": "P100",
+      "target": "D024",
+      "value": 1
+    },
+    {
+      "source": "D024",
+      "target": "H007",
+      "value": 1
+    },
+    {
+      "source": "P068",
+      "target": "D030",
+      "value": 7
+    },
+    {
+      "source": "D030",
+      "target": "H005",
+      "value": 7
+    },
+    {
+      "source": "P042",
+      "target": "D009",
+      "value": 1
+    },
+    {
+      "source": "D009",
+      "target": "H008",
+      "value": 1
+    },
+    {
+      "source": "P076",
+      "target": "D010",
+      "value": 1
+    },
+    {
+      "source": "D010",
+      "target": "H002",
+      "value": 1
+    },
+    {
+      "source": "P050",
+      "target": "D010",
+      "value": 1
+    },
+    {
+      "source": "P035",
+      "target": "D026",
+      "value": 1
+    },
+    {
+      "source": "D026",
+      "target": "H002",
+      "value": 1
+    },
+    {
+      "source": "P055",
+      "target": "D021",
+      "value": 1
+    },
+    {
+      "source": "D021",
+      "target": "H006",
+      "value": 1
+    },
+    {
+      "source": "P048",
+      "target": "D022",
+      "value": 1
+    },
+    {
+      "source": "P057",
+      "target": "D025",
+      "value": 1
+    },
+    {
+      "source": "D025",
+      "target": "H001",
+      "value": 1
+    },
+    {
+      "source": "P038",
+      "target": "D024",
+      "value": 1
+    },
+    {
+      "source": "P022",
+      "target": "D005",
+      "value": 1
+    },
+    {
+      "source": "D005",
+      "target": "H008",
+      "value": 1
+    },
+    {
+      "source": "P057",
+      "target": "D030",
+      "value": 1
+    },
+    {
+      "source": "D030",
+      "target": "H001",
+      "value": 1
+    },
+    {
+      "source": "P090",
+      "target": "D023",
+      "value": 1
+    },
+    {
+      "source": "P020",
+      "target": "D018",
+      "value": 1
+    },
+    {
+      "source": "D018",
+      "target": "H004",
+      "value": 3
+    },
+    {
+      "source": "P029",
+      "target": "D014",
+      "value": 1
+    },
+    {
+      "source": "P009",
+      "target": "D013",
+      "value": 1
+    },
+    {
+      "source": "D013",
+      "target": "H004",
+      "value": 1
+    },
+    {
+      "source": "P089",
+      "target": "D022",
+      "value": 1
+    },
+    {
+      "source": "D022",
+      "target": "H003",
+      "value": 2
+    },
+    {
+      "source": "P052",
+      "target": "D010",
+      "value": 1
+    },
+    {
+      "source": "D010",
+      "target": "H007",
+      "value": 1
+    },
+    {
+      "source": "P053",
+      "target": "D016",
+      "value": 1
+    },
+    {
+      "source": "D016",
+      "target": "H008",
+      "value": 1
+    },
+    {
+      "source": "D027",
+      "target": "H005",
+      "value": 1
+    },
+    {
+      "source": "P005",
+      "target": "D029",
+      "value": 1
+    },
+    {
+      "source": "D029",
+      "target": "H007",
+      "value": 1
+    },
+    {
+      "source": "P031",
+      "target": "D015",
+      "value": 1
+    },
+    {
+      "source": "D015",
+      "target": "H005",
+      "value": 1
+    },
+    {
+      "source": "P028",
+      "target": "D011",
+      "value": 1
+    },
+    {
+      "source": "D011",
+      "target": "H006",
+      "value": 1
+    },
+    {
+      "source": "P021",
+      "target": "D018",
+      "value": 1
+    },
+    {
+      "source": "P076",
+      "target": "D022",
+      "value": 1
+    },
+    {
+      "source": "P036",
+      "target": "D018",
+      "value": 1
+    },
+    {
+      "source": "P091",
+      "target": "D003",
+      "value": 1
+    },
+    {
+      "source": "D003",
+      "target": "H002",
+      "value": 1
+    },
+    {
+      "source": "P019",
+      "target": "D029",
+      "value": 1
+    },
+    {
+      "source": "D029",
+      "target": "H001",
+      "value": 2
+    },
+    {
+      "source": "P026",
+      "target": "D007",
+      "value": 1
+    },
+    {
+      "source": "D007",
+      "target": "H010",
+      "value": 1
+    },
+    {
+      "source": "P081",
+      "target": "D016",
+      "value": 1
+    },
+    {
+      "source": "P084",
+      "target": "D004",
+      "value": 1
+    },
+    {
+      "source": "P039",
+      "target": "D007",
+      "value": 1
+    },
+    {
+      "source": "D007",
+      "target": "H005",
+      "value": 1
+    },
+    {
+      "source": "P083",
+      "target": "D020",
+      "value": 1
+    },
+    {
+      "source": "D020",
+      "target": "H002",
+      "value": 2
+    },
+    {
+      "source": "P077",
+      "target": "D009",
+      "value": 1
+    },
+    {
+      "source": "P028",
+      "target": "D004",
+      "value": 1
+    },
+    {
+      "source": "D004",
+      "target": "H006",
+      "value": 1
+    },
+    {
+      "source": "P022",
+      "target": "D018",
+      "value": 1
+    },
+    {
+      "source": "D018",
+      "target": "H009",
+      "value": 1
+    },
+    {
+      "source": "P089",
+      "target": "D016",
+      "value": 1
+    },
+    {
+      "source": "P094",
+      "target": "D020",
+      "value": 1
+    },
+    {
+      "source": "D020",
+      "target": "H006",
+      "value": 1
+    },
+    {
+      "source": "P087",
+      "target": "D016",
+      "value": 1
+    },
+    {
+      "source": "P008",
+      "target": "D004",
+      "value": 1
+    },
+    {
+      "source": "P019",
+      "target": "D013",
+      "value": 1
+    },
+    {
+      "source": "P061",
+      "target": "D015",
+      "value": 1
+    },
+    {
+      "source": "D015",
+      "target": "H002",
+      "value": 1
+    },
+    {
+      "source": "P010",
+      "target": "D004",
+      "value": 1
+    },
+    {
+      "source": "D004",
+      "target": "H010",
+      "value": 1
+    },
+    {
+      "source": "P077",
+      "target": "D010",
+      "value": 1
+    },
+    {
+      "source": "D010",
+      "target": "H008",
+      "value": 1
+    },
+    {
+      "source": "P095",
+      "target": "D026",
+      "value": 1
+    },
+    {
+      "source": "D026",
+      "target": "H009",
+      "value": 1
+    },
+    {
+      "source": "P095",
+      "target": "D018",
+      "value": 1
+    },
+    {
+      "source": "D018",
+      "target": "H001",
+      "value": 2
+    },
+    {
+      "source": "P012",
+      "target": "D012",
+      "value": 1
+    },
+    {
+      "source": "D012",
+      "target": "H007",
+      "value": 1
+    },
+    {
+      "source": "P042",
+      "target": "D023",
+      "value": 1
+    },
+    {
+      "source": "D023",
+      "target": "H009",
+      "value": 1
+    },
+    {
+      "source": "P051",
+      "target": "D027",
+      "value": 1
+    },
+    {
+      "source": "D027",
+      "target": "H006",
+      "value": 1
+    },
+    {
+      "source": "P099",
+      "target": "D025",
+      "value": 1
+    },
+    {
+      "source": "P073",
+      "target": "D025",
+      "value": 1
+    },
+    {
+      "source": "D025",
+      "target": "H007",
+      "value": 1
+    },
+    {
+      "source": "P037",
+      "target": "D002",
+      "value": 1
+    },
+    {
+      "source": "P001",
+      "target": "D007",
+      "value": 1
+    },
+    {
+      "source": "P089",
+      "target": "D026",
+      "value": 1
+    },
+    {
+      "source": "D026",
+      "target": "H010",
+      "value": 1
+    },
+    {
+      "source": "P084",
+      "target": "D020",
+      "value": 1
+    },
+    {
+      "source": "D020",
+      "target": "H005",
+      "value": 1
+    },
+    {
+      "source": "P046",
+      "target": "D024",
+      "value": 1
+    },
+    {
+      "source": "D024",
+      "target": "H004",
+      "value": 1
+    },
+    {
+      "source": "P066",
+      "target": "D017",
+      "value": 1
+    },
+    {
+      "source": "D017",
+      "target": "H007",
+      "value": 2
+    },
+    {
+      "source": "P057",
+      "target": "D020",
+      "value": 1
+    },
+    {
+      "source": "P073",
+      "target": "D026",
+      "value": 1
+    },
+    {
+      "source": "D026",
+      "target": "H001",
+      "value": 1
+    },
+    {
+      "source": "P049",
+      "target": "D006",
+      "value": 1
+    },
+    {
+      "source": "D006",
+      "target": "H006",
+      "value": 1
+    },
+    {
+      "source": "P055",
+      "target": "D023",
+      "value": 1
+    },
+    {
+      "source": "D023",
+      "target": "H006",
+      "value": 2
+    },
+    {
+      "source": "P031",
+      "target": "D005",
+      "value": 1
+    },
+    {
+      "source": "D005",
+      "target": "H002",
+      "value": 1
+    },
+    {
+      "source": "P079",
+      "target": "D029",
+      "value": 1
+    },
+    {
+      "source": "P016",
+      "target": "D001",
+      "value": 2
+    },
+    {
+      "source": "D001",
+      "target": "H009",
+      "value": 1
+    },
+    {
+      "source": "P062",
+      "target": "D008",
+      "value": 1
+    },
+    {
+      "source": "D008",
+      "target": "H002",
+      "value": 1
+    },
+    {
+      "source": "D001",
+      "target": "H001",
+      "value": 1
+    },
+    {
+      "source": "P027",
+      "target": "D023",
+      "value": 1
+    },
+    {
+      "source": "P081",
+      "target": "D019",
+      "value": 1
+    },
+    {
+      "source": "D019",
+      "target": "H002",
+      "value": 3
+    },
+    {
+      "source": "P062",
+      "target": "D024",
+      "value": 1
+    },
+    {
+      "source": "D024",
+      "target": "H005",
+      "value": 1
+    },
+    {
+      "source": "P047",
+      "target": "D005",
+      "value": 1
+    },
+    {
+      "source": "P025",
+      "target": "D011",
+      "value": 1
+    },
+    {
+      "source": "D011",
+      "target": "H002",
+      "value": 1
+    },
+    {
+      "source": "P017",
+      "target": "D009",
+      "value": 1
+    },
+    {
+      "source": "D009",
+      "target": "H010",
+      "value": 1
+    },
+    {
+      "source": "P045",
+      "target": "D009",
+      "value": 1
+    },
+    {
+      "source": "D009",
+      "target": "H003",
+      "value": 1
+    },
+    {
+      "source": "P089",
+      "target": "D023",
+      "value": 1
+    },
+    {
+      "source": "P029",
+      "target": "D010",
+      "value": 1
+    },
+    {
+      "source": "D010",
+      "target": "H006",
+      "value": 1
+    },
+    {
+      "source": "P082",
+      "target": "D023",
+      "value": 1
+    },
+    {
+      "source": "P049",
+      "target": "D029",
+      "value": 1
+    },
+    {
+      "source": "D029",
+      "target": "H010",
+      "value": 1
+    },
+    {
+      "source": "P081",
+      "target": "D005",
+      "value": 1
+    },
+    {
+      "source": "D005",
+      "target": "H001",
+      "value": 1
+    },
+    {
+      "source": "P062",
+      "target": "D007",
+      "value": 1
+    },
+    {
+      "source": "D007",
+      "target": "H009",
+      "value": 1
+    },
+    {
+      "source": "P033",
+      "target": "D001",
+      "value": 1
+    },
+    {
+      "source": "D001",
+      "target": "H004",
+      "value": 1
+    },
+    {
+      "source": "P039",
+      "target": "D024",
+      "value": 1
+    },
+    {
+      "source": "D024",
+      "target": "H008",
+      "value": 1
+    },
+    {
+      "source": "P099",
+      "target": "D008",
+      "value": 1
+    },
+    {
+      "source": "D008",
+      "target": "H010",
+      "value": 1
+    },
+    {
+      "source": "P097",
+      "target": "D009",
+      "value": 1
+    },
+    {
+      "source": "D009",
+      "target": "H007",
+      "value": 2
+    },
+    {
+      "source": "P032",
+      "target": "D006",
+      "value": 1
+    },
+    {
+      "source": "D006",
+      "target": "H005",
+      "value": 1
+    },
+    {
+      "source": "P087",
+      "target": "D028",
+      "value": 1
+    },
+    {
+      "source": "D028",
+      "target": "H009",
+      "value": 1
+    },
+    {
+      "source": "P003",
+      "target": "D016",
+      "value": 1
+    },
+    {
+      "source": "D016",
+      "target": "H009",
+      "value": 1
+    },
+    {
+      "source": "P019",
+      "target": "D026",
+      "value": 1
+    },
+    {
+      "source": "P010",
+      "target": "D029",
+      "value": 1
+    },
+    {
+      "source": "D029",
+      "target": "H009",
+      "value": 1
+    },
+    {
+      "source": "P086",
+      "target": "D023",
+      "value": 1
+    },
+    {
+      "source": "D023",
+      "target": "H005",
+      "value": 2
+    },
+    {
+      "source": "P008",
+      "target": "D013",
+      "value": 1
+    },
+    {
+      "source": "D013",
+      "target": "H010",
+      "value": 1
+    },
+    {
+      "source": "P026",
+      "target": "D008",
+      "value": 1
+    },
+    {
+      "source": "D008",
+      "target": "H003",
+      "value": 1
+    },
+    {
+      "source": "P024",
+      "target": "D022",
+      "value": 1
+    },
+    {
+      "source": "D022",
+      "target": "H010",
+      "value": 1
+    },
+    {
+      "source": "P079",
+      "target": "D026",
+      "value": 1
+    },
+    {
+      "source": "P051",
+      "target": "D019",
+      "value": 1
+    },
+    {
+      "source": "P007",
+      "target": "D017",
+      "value": 1
+    },
+    {
+      "source": "D023",
+      "target": "H008",
+      "value": 1
+    },
+    {
+      "source": "P059",
+      "target": "D002",
+      "value": 1
+    },
+    {
+      "source": "D002",
+      "target": "H006",
+      "value": 1
+    },
+    {
+      "source": "P014",
+      "target": "D021",
+      "value": 1
+    },
+    {
+      "source": "D021",
+      "target": "H009",
+      "value": 1
+    },
+    {
+      "source": "P031",
+      "target": "D021",
+      "value": 1
+    },
+    {
+      "source": "D021",
+      "target": "H008",
+      "value": 1
+    },
+    {
+      "source": "P006",
+      "target": "D030",
+      "value": 1
+    },
+    {
+      "source": "D030",
+      "target": "H004",
+      "value": 1
+    },
+    {
+      "source": "P079",
+      "target": "D009",
+      "value": 1
+    },
+    {
+      "source": "P034",
+      "target": "D012",
+      "value": 1
+    },
+    {
+      "source": "D012",
+      "target": "H003",
+      "value": 1
+    },
+    {
+      "source": "P094",
+      "target": "D024",
+      "value": 1
+    },
+    {
+      "source": "D024",
+      "target": "H002",
+      "value": 1
+    },
+    {
+      "source": "P074",
+      "target": "D019",
+      "value": 1
+    },
+    {
+      "source": "D019",
+      "target": "H003",
+      "value": 1
+    },
+    {
+      "source": "P016",
+      "target": "D006",
+      "value": 1
+    },
+    {
+      "source": "D006",
+      "target": "H002",
+      "value": 1
+    },
+    {
+      "source": "P046",
+      "target": "D019",
+      "value": 1
+    },
+    {
+      "source": "P021",
+      "target": "D027",
+      "value": 1
+    },
+    {
+      "source": "D027",
+      "target": "H008",
+      "value": 1
+    },
+    {
+      "source": "P064",
+      "target": "D004",
+      "value": 1
+    },
+    {
+      "source": "D004",
+      "target": "H001",
+      "value": 1
+    },
+    {
+      "source": "P023",
+      "target": "D018",
+      "value": 1
+    },
+    {
+      "source": "P006",
+      "target": "D023",
+      "value": 1
+    },
+    {
+      "source": "P013",
+      "target": "D021",
+      "value": 1
+    },
+    {
+      "source": "D021",
+      "target": "H005",
+      "value": 1
+    },
+    {
+      "source": "P029",
+      "target": "D017",
+      "value": 1
+    },
+    {
+      "source": "D017",
+      "target": "H003",
+      "value": 1
+    },
+    {
+      "source": "P032",
+      "target": "D016",
+      "value": 1
+    }
+  ],
+  "gangs": 8,
+  "gangDetails": [
+    {
+      "id": "G001",
+      "members": [
+        "P088",
+        "H006",
+        "P026",
+        "D003",
+        "P027"
+      ]
+    },
+    {
+      "id": "G002",
+      "members": [
+        "H004",
+        "P036",
+        "P020",
+        "D018",
+        "P021"
+      ]
+    },
+    {
+      "id": "G003",
+      "members": [
+        "H003",
+        "D022",
+        "P089",
+        "P076"
+      ]
+    },
+    {
+      "id": "G004",
+      "members": [
+        "D026",
+        "P019",
+        "P079",
+        "H006"
+      ]
+    },
+    {
+      "id": "G005",
+      "members": [
+        "D016",
+        "H006",
+        "P055",
+        "D009",
+        "H009",
+        "H005",
+        "D021"
+      ]
+    },
+    {
+      "id": "G006",
+      "members": [
+        "P081",
+        "D030",
+        "D002",
+        "H010",
+        "H007"
+      ]
+    },
+    {
+      "id": "G007",
+      "members": [
+        "H008",
+        "D003",
+        "P076",
+        "D010",
+        "H002"
+      ]
+    },
+    {
+      "id": "G008",
+      "members": [
+        "H001",
+        "D027",
+        "H010",
+        "D025",
+        "P057"
+      ]
+    }
+  ]
+}

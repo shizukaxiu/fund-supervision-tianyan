@@ -1,0 +1,26 @@
+{
+  "scanDate": "2026-06-16",
+  "totalRecords": 196,
+  "totalAmount": 48918.55,
+  "abnormalRecords": 56,
+  "abnormalAmount": 14667.65,
+  "highRiskRecords": 29,
+  "highRiskAmount": 4459.27,
+  "suspectedGangs": 8,
+  "districtRisk": {
+    "秦淮区": 1662.0,
+    "雨花台区": 2782.18,
+    "鼓楼区": 7675.62,
+    "建邺区": 930.11,
+    "栖霞区": 861.1,
+    "江宁区": 756.64
+  },
+  "abnormalTypeCount": {
+    "over_indication": 3,
+    "over_dose": 15,
+    "trace_code_abnormal": 10,
+    "frequent_visit": 15,
+    "cross_hospital": 9,
+    "fake_hospitalization": 4
+  }
+}
