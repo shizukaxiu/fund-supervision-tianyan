@@ -83,6 +83,22 @@ export function NetworkMapModal({ network, records, alerts, selectedAlert, isOpe
   const [mapTransform, setMapTransform] = useState('');
   // 地图模式内独立的告警选中状态，点击右侧卡片过滤地图，再次点击退出选择
   const [selectedMapAlert, setSelectedMapAlert] = useState<Alert | null>(null);
+  // 点击地图上节点时，右侧列表只显示包含该节点的记录
+  const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
+
+  // 根据点击的节点过滤右侧异常记录列表
+  const visibleAlerts = useMemo(() => {
+    if (!selectedNodeId) return alerts;
+    return alerts.filter((alert) => {
+      const record = records.find((r) => r.recordId === alert.recordId);
+      if (!record) return alert.patientId === selectedNodeId;
+      return (
+        record.patientId === selectedNodeId ||
+        record.doctorId === selectedNodeId ||
+        record.hospitalId === selectedNodeId
+      );
+    });
+  }, [alerts, records, selectedNodeId]);
 
   const typeColors: Record<string, string> = {
     hospital: '#22d3ee',
@@ -283,6 +299,7 @@ export function NetworkMapModal({ network, records, alerts, selectedAlert, isOpe
       if (nodeId) {
         const node = network.nodes.find((n) => n.id === nodeId);
         if (node) setSelectedNode(node);
+        setSelectedNodeId((prev) => (prev === nodeId ? null : nodeId));
       }
     });
 
@@ -348,6 +365,7 @@ export function NetworkMapModal({ network, records, alerts, selectedAlert, isOpe
             <button
               onClick={() => {
                 setSelectedMapAlert(null);
+                setSelectedNodeId(null);
                 onClose();
               }}
               className="pointer-events-auto flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-800/80 border border-slate-700 text-slate-300 hover:bg-slate-700/80 transition-colors"
@@ -375,10 +393,30 @@ export function NetworkMapModal({ network, records, alerts, selectedAlert, isOpe
               <div className="flex items-center gap-2 px-3 py-2 border-b border-slate-700/50 bg-slate-800/40">
                 <Bell className="w-3.5 h-3.5 text-cyan-400" />
                 <span className="text-xs font-medium text-slate-200">异常记录</span>
-                <span className="ml-auto text-[10px] text-slate-500">{alerts.length} 条</span>
+                <span className="ml-auto text-[10px] text-slate-500">
+                  {selectedNodeId
+                    ? `${visibleAlerts.length} / ${alerts.length} 条`
+                    : `${alerts.length} 条`}
+                </span>
+                {selectedNodeId && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedNodeId(null);
+                    }}
+                    className="ml-2 text-[10px] px-1.5 py-0.5 rounded bg-slate-700/50 text-slate-300 hover:bg-slate-600/50 transition-colors"
+                  >
+                    清除
+                  </button>
+                )}
               </div>
               <div className="flex-1 overflow-y-auto p-2 space-y-2">
-                {alerts.map((alert) => (
+                {visibleAlerts.length === 0 ? (
+                  <div className="text-center text-slate-500 text-xs py-8">
+                    该节点暂无异常记录
+                  </div>
+                ) : (
+                  visibleAlerts.map((alert) => (
                   <motion.div
                     key={alert.id}
                     onClick={() => setSelectedMapAlert(selectedMapAlert?.id === alert.id ? null : alert)}
@@ -397,7 +435,8 @@ export function NetworkMapModal({ network, records, alerts, selectedAlert, isOpe
                     <div className="text-slate-200 font-medium truncate">{alert.type}</div>
                     <div className="text-slate-400 truncate mt-0.5">{alert.hospital} · {alert.patient}</div>
                   </motion.div>
-                ))}
+                  ))
+                )}
               </div>
             </div>
           </div>
