@@ -8,13 +8,14 @@ import { NetworkMapModal } from './NetworkMapModal';
 interface FraudNetworkProps {
   network: NetworkData;
   records: MedicalRecord[];
+  alerts: Alert[];
   selectedAlert: Alert | null;
 }
 
 /**
  * 基金监管天眼 - 风险网络图谱组件（AntV G6 v5）
  */
-export function FraudNetwork({ network, records, selectedAlert }: FraudNetworkProps) {
+export function FraudNetwork({ network, records, alerts, selectedAlert }: FraudNetworkProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const graphRef = useRef<Graph | null>(null);
   const [selectedNode, setSelectedNode] = useState<NetworkNode | null>(null);
@@ -250,6 +251,7 @@ export function FraudNetwork({ network, records, selectedAlert }: FraudNetworkPr
       <NetworkMapModal
         network={network}
         records={records}
+        alerts={alerts}
         selectedAlert={selectedAlert}
         isOpen={isMapOpen}
         onClose={() => setIsMapOpen(false)}

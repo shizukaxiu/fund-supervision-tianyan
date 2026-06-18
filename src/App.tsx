@@ -156,6 +156,7 @@ function App() {
               <FraudNetwork
                 network={network}
                 records={records}
+                alerts={alerts}
                 selectedAlert={selectedAlert}
               />
             </div>

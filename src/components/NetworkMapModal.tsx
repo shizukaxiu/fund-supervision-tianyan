@@ -2,8 +2,9 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Graph } from '@antv/g6';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Map as MapIcon, Network } from 'lucide-react';
+import { X, Map as MapIcon, Network, Bell } from 'lucide-react';
 import type { NetworkData, Alert, MedicalRecord, NetworkNode } from '../types';
+import { getRiskLevelColor } from '../utils/formatters';
 import { NodeDetailDrawer } from './NodeDetailDrawer';
 import { NanjingMapBackground } from './NanjingMapBackground';
 import hospitalMapCoords from '../mock/hospitalMapCoords.json';
@@ -11,6 +12,7 @@ import hospitalMapCoords from '../mock/hospitalMapCoords.json';
 interface NetworkMapModalProps {
   network: NetworkData;
   records: MedicalRecord[];
+  alerts: Alert[];
   selectedAlert: Alert | null;
   isOpen: boolean;
   onClose: () => void;
@@ -74,11 +76,13 @@ function separateHospitals(
   return result;
 }
 
-export function NetworkMapModal({ network, records, selectedAlert, isOpen, onClose }: NetworkMapModalProps) {
+export function NetworkMapModal({ network, records, alerts, selectedAlert, isOpen, onClose }: NetworkMapModalProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const graphRef = useRef<Graph | null>(null);
   const [selectedNode, setSelectedNode] = useState<NetworkNode | null>(null);
   const [mapTransform, setMapTransform] = useState('');
+  // 地图模式内独立的告警选中状态，点击右侧卡片过滤地图，再次点击退出选择
+  const [selectedMapAlert, setSelectedMapAlert] = useState<Alert | null>(null);
 
   const typeColors: Record<string, string> = {
     hospital: '#22d3ee',
@@ -216,6 +220,10 @@ export function NetworkMapModal({ network, records, selectedAlert, isOpen, onClo
             opacity: 0.15,
             labelOpacity: 0.15,
           },
+          filtered: {
+            opacity: 0,
+            labelOpacity: 0,
+          },
         },
       },
       edge: {
@@ -227,6 +235,9 @@ export function NetworkMapModal({ network, records, selectedAlert, isOpen, onClo
           },
           dim: {
             opacity: 0.08,
+          },
+          filtered: {
+            opacity: 0,
           },
         },
       },
@@ -283,7 +294,8 @@ export function NetworkMapModal({ network, records, selectedAlert, isOpen, onClo
     };
   }, [isOpen, network, mapPositions]);
 
-  // 当选中告警变化时高亮路径
+  // 当选中告警变化时高亮路径：相关节点/边高亮，无关元素隐藏
+  const effectiveAlert = selectedMapAlert ?? selectedAlert;
   useEffect(() => {
     if (!graphRef.current || !isOpen) return;
     const graph = graphRef.current;
@@ -294,24 +306,24 @@ export function NetworkMapModal({ network, records, selectedAlert, isOpen, onClo
       graph.setElementState(`${edge.source}-${edge.target}`, []);
     });
 
-    if (!selectedAlert) return;
+    if (!effectiveAlert) return;
 
-    const record = records.find((r) => r.recordId === selectedAlert.recordId);
+    const record = records.find((r) => r.recordId === effectiveAlert.recordId);
     const highlightIds = record
       ? [record.patientId, record.doctorId, record.hospitalId]
-      : [selectedAlert.patientId];
+      : [effectiveAlert.patientId];
 
     allNodeIds.forEach((id) => {
-      graph.setElementState(id, highlightIds.includes(id) ? ['highlight'] : ['dim']);
+      graph.setElementState(id, highlightIds.includes(id) ? ['highlight'] : ['filtered']);
     });
     network.edges.forEach((edge) => {
       const isHighlighted = record
         ? (edge.source === record.patientId && edge.target === record.doctorId) ||
           (edge.source === record.doctorId && edge.target === record.hospitalId)
         : false;
-      graph.setElementState(`${edge.source}-${edge.target}`, isHighlighted ? ['highlight'] : ['dim']);
+      graph.setElementState(`${edge.source}-${edge.target}`, isHighlighted ? ['highlight'] : ['filtered']);
     });
-  }, [selectedAlert, network, records, isOpen]);
+  }, [effectiveAlert, network, records, isOpen]);
 
   return createPortal(
     <AnimatePresence>
@@ -334,7 +346,10 @@ export function NetworkMapModal({ network, records, selectedAlert, isOpen, onClo
               </div>
             </div>
             <button
-              onClick={onClose}
+              onClick={() => {
+                setSelectedMapAlert(null);
+                onClose();
+              }}
               className="pointer-events-auto flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-800/80 border border-slate-700 text-slate-300 hover:bg-slate-700/80 transition-colors"
             >
               <X className="w-4 h-4" />
@@ -351,6 +366,39 @@ export function NetworkMapModal({ network, records, selectedAlert, isOpen, onClo
                 records={records}
                 onClose={() => setSelectedNode(null)}
               />
+            </div>
+          </div>
+
+          {/* 右侧异常记录卡片：点击过滤地图，再次点击退出选择 */}
+          <div className="absolute top-24 right-4 bottom-24 w-72 z-10 flex flex-col pointer-events-none">
+            <div className="pointer-events-auto flex flex-col h-full rounded-lg bg-slate-900/80 border border-slate-700/50 backdrop-blur-sm overflow-hidden">
+              <div className="flex items-center gap-2 px-3 py-2 border-b border-slate-700/50 bg-slate-800/40">
+                <Bell className="w-3.5 h-3.5 text-cyan-400" />
+                <span className="text-xs font-medium text-slate-200">异常记录</span>
+                <span className="ml-auto text-[10px] text-slate-500">{alerts.length} 条</span>
+              </div>
+              <div className="flex-1 overflow-y-auto p-2 space-y-2">
+                {alerts.map((alert) => (
+                  <motion.div
+                    key={alert.id}
+                    onClick={() => setSelectedMapAlert(selectedMapAlert?.id === alert.id ? null : alert)}
+                    className={`p-2.5 rounded-md cursor-pointer border transition-all duration-200 text-xs ${
+                      selectedMapAlert?.id === alert.id
+                        ? 'bg-cyan-500/15 border-cyan-500/50'
+                        : 'bg-slate-800/40 border-slate-700/50 hover:border-slate-600'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-[10px] text-slate-400">{alert.id}</span>
+                      <span className={`text-[10px] px-1.5 py-0.5 rounded border ${getRiskLevelColor(alert.level)}`}>
+                        {alert.level}
+                      </span>
+                    </div>
+                    <div className="text-slate-200 font-medium truncate">{alert.type}</div>
+                    <div className="text-slate-400 truncate mt-0.5">{alert.hospital} · {alert.patient}</div>
+                  </motion.div>
+                ))}
+              </div>
             </div>
           </div>
 

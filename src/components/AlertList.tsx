@@ -7,7 +7,7 @@ import { getRiskLevelColor } from '../utils/formatters';
 interface AlertListProps {
   alerts: Alert[];
   selectedAlert: Alert | null;
-  onSelectAlert: (alert: Alert) => void;
+  onSelectAlert: (alert: Alert | null) => void;
 }
 
 const LEVELS = ['全部', '极高', '高', '中', '低'] as const;
@@ -111,7 +111,7 @@ export function AlertList({ alerts, selectedAlert, onSelectAlert }: AlertListPro
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.3, delay: index * 0.05 }}
-            onClick={() => onSelectAlert(alert)}
+            onClick={() => onSelectAlert(selectedAlert?.id === alert.id ? null : alert)}
             className={`
               p-3 rounded-lg cursor-pointer border transition-all duration-200
               ${selectedAlert?.id === alert.id 
