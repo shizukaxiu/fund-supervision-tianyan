@@ -65,7 +65,9 @@
 │   │   ├── overview.json
 │   │   ├── alerts.json
 │   │   ├── network.json
-│   │   └── caseAnalysis.json
+│   │   ├── caseAnalysis.json
+│   │   ├── nanjingMapPaths.json     # 投影后的南京区划 SVG path
+│   │   └── hospitalMapCoords.json   # 医院在地图投影坐标系中的位置
 │   └── components/            # React 组件
 │       ├── KpiCards.tsx
 │       ├── AlertList.tsx
@@ -75,7 +77,9 @@
 │       ├── NodeDetailDrawer.tsx
 │       ├── ScanModal.tsx
 │       ├── TrendChart.tsx
-│       └── RankBoard.tsx
+│       ├── RankBoard.tsx
+│       ├── NetworkMapModal.tsx      # 地图模式全屏弹窗（G6 + 真实南京地图）
+│       └── NanjingMapBackground.tsx # 南京市区 GeoJSON SVG 背景
 ```
 
 ---
@@ -129,6 +133,8 @@
 | 改告警列表/筛选/搜索 | `src/components/AlertList.tsx` |
 | 改南京市风险分布 | `src/components/DistrictRiskMap.tsx` |
 | 改关系图谱 | `src/components/FraudNetwork.tsx` |
+| 改地图模式弹窗 | `src/components/NetworkMapModal.tsx` |
+| 改南京地图背景 | `src/components/NanjingMapBackground.tsx` |
 | 改节点详情抽屉 | `src/components/NodeDetailDrawer.tsx` |
 | 改多 Agent 研判面板 | `src/components/AnalysisPanel.tsx` |
 | 改批量扫描弹窗 | `src/components/ScanModal.tsx` |
@@ -173,6 +179,13 @@ python scripts/generateMockData.py
 - [x] 飞检任务书 + 状态流转
 - [x] 全屏/刷新按钮
 - [x] 响应式布局（大屏优先）
+- [x] 真实南京市区地图背景（GeoJSON 投影）
+- [x] 地图模式：医院固定于真实地理位置，医生/患者可拖拽
+- [x] 地图模式视口同步：SVG 背景随 G6 缩放/平移一起变换
+- [x] 地图模式右侧异常记录列表面板
+- [x] 点击地图节点过滤右侧异常记录（患者/医生/医院）
+- [x] 点击右侧异常记录高亮并过滤地图关系链
+- [x] 再次点击已选中记录/节点退出选择状态
 
 ---
 
@@ -187,7 +200,31 @@ python scripts/generateMockData.py
 
 ---
 
-## 九、重要提示
+## 九、开发日志
+
+### 2026-06-17 地图模式迭代
+
+今日围绕地图模式完成了三项核心迭代：
+
+1. **修复 SVG 背景与 G6 视口不同步**
+   - 监听 G6 `aftertransform` 事件，用 `graph.getZoom()` + `graph.getViewportCenter()` 计算 CSS transform
+   - 通过 `requestAnimationFrame` 节流，并在 StrictMode 下做 `destroyed` 安全校验
+   - 提交：`eaae23f`
+
+2. **异常记录与地图双向过滤**
+   - 地图模式右侧新增异常记录列表面板
+   - 点击卡片：高亮并仅保留该记录的患者 → 医生 → 医院关系链，其余节点/连线隐藏
+   - 再次点击同一条卡片：退出选择，恢复全部显示
+   - 提交：`ee595d2`
+
+3. **点击地图节点反向过滤异常记录**
+   - 点击地图上的医院/医生/患者节点，右侧列表只显示包含该节点的异常记录
+   - 再次点击同一节点或点击「清除」按钮，恢复显示全部记录
+   - 提交：`d3736b2`
+
+---
+
+## 十、重要提示
 
 1. **不要随意升级 TailwindCSS 到 v4**，当前使用 v3，配置方式不同
 2. **AntV G6 使用 v5**，API 与 v4 差异很大
