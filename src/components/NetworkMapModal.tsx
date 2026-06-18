@@ -78,6 +78,7 @@ export function NetworkMapModal({ network, records, selectedAlert, isOpen, onClo
   const containerRef = useRef<HTMLDivElement>(null);
   const graphRef = useRef<Graph | null>(null);
   const [selectedNode, setSelectedNode] = useState<NetworkNode | null>(null);
+  const [mapTransform, setMapTransform] = useState('');
 
   const typeColors: Record<string, string> = {
     hospital: '#22d3ee',
@@ -247,6 +248,25 @@ export function NetworkMapModal({ network, records, selectedAlert, isOpen, onClo
     graphRef.current = graph;
     graph.render();
 
+    // 同步 SVG 背景与 G6 画布视口：缩放/平移时避免地图与节点分层
+    let rafId: number | null = null;
+    const syncMapTransform = () => {
+      if (graph.destroyed || graphRef.current !== graph) return;
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => {
+        if (graph.destroyed || graphRef.current !== graph) return;
+        const zoom = graph.getZoom();
+        const [vx, vy] = graph.getViewportCenter();
+        const tx = (centerX - vx) * zoom;
+        const ty = (centerY - vy) * zoom;
+        setMapTransform(`translate(${tx}px, ${ty}px) scale(${zoom})`);
+      });
+    };
+
+    graph.on('aftertransform', syncMapTransform);
+    // 首次渲染完成后同步一次，避免 StrictMode 下销毁后仍触发事件导致报错
+    graph.once('afterrender', syncMapTransform);
+
     graph.on('node:click', (event: any) => {
       const nodeId = event.target?.id || event?.data?.id;
       if (nodeId) {
@@ -256,6 +276,8 @@ export function NetworkMapModal({ network, records, selectedAlert, isOpen, onClo
     });
 
     return () => {
+      if (rafId) cancelAnimationFrame(rafId);
+      graph.off('aftertransform', syncMapTransform);
       graph.destroy();
       graphRef.current = null;
     };
@@ -322,7 +344,7 @@ export function NetworkMapModal({ network, records, selectedAlert, isOpen, onClo
 
           {/* 地图 + 图谱容器 */}
           <div className="absolute inset-0">
-            <NanjingMapBackground />
+            <NanjingMapBackground transform={mapTransform} />
             <div ref={containerRef} className="absolute inset-0 w-full h-full">
               <NodeDetailDrawer
                 node={selectedNode}

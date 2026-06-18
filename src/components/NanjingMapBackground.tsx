@@ -20,11 +20,16 @@ const STROKES = [
   'rgba(14,165,233,0.35)',
 ];
 
+interface NanjingMapBackgroundProps {
+  /** 与 G6 画布同步的 CSS transform，避免缩放/平移时地图与节点分层 */
+  transform?: string;
+}
+
 /**
  * 南京市区真实地图背景（基于 GeoJSON 等距圆柱投影）
  * 坐标系 viewBox="0 0 1000 1000"，与 NetworkMapModal 使用同一投影坐标系
  */
-export function NanjingMapBackground() {
+export function NanjingMapBackground({ transform }: NanjingMapBackgroundProps) {
   const { width, height, districts } = mapData;
 
   return (
@@ -33,6 +38,7 @@ export function NanjingMapBackground() {
       viewBox={`0 0 ${width} ${height}`}
       preserveAspectRatio="xMidYMid meet"
       xmlns="http://www.w3.org/2000/svg"
+      style={{ transform, transformOrigin: 'center center' }}
     >
       <defs>
         <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
