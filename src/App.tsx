@@ -67,13 +67,13 @@ function App() {
 
   if (isLoading) {
     return (
-      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+      <div className="w-full h-full flex items-center justify-center bg-slate-950">
         <motion.div
           animate={{ rotate: 360 }}
-          transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
-          className="w-12 h-12 border-2 border-cyan-500/20 border-t-cyan-400 rounded-full"
+          transition={{ duration: 1.2, repeat: Infinity, ease: 'linear' }}
+          className="w-10 h-10 border-2 border-cyan-500/20 border-t-cyan-400 rounded-full"
         />
-        <span className="ml-4 text-cyan-400 text-lg">数据加载中...</span>
+        <span className="ml-3 text-slate-300 text-base">数据加载中...</span>
       </div>
     );
   }
@@ -87,15 +87,15 @@ function App() {
   }
 
   return (
-    <div className="w-full h-screen p-3 lg:p-4 flex flex-col gap-3 lg:gap-4 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 overflow-hidden">
+    <div className="w-full h-screen p-3 lg:p-4 flex flex-col gap-3 lg:gap-4 bg-slate-950 overflow-hidden">
       {/* 顶部标题栏 */}
       <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 px-2">
         <div className="flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-cyan-500/10 border border-cyan-500/30">
+          <div className="p-2 rounded-lg bg-cyan-500/10 border border-cyan-500/20">
             <Shield className="w-6 h-6 text-cyan-400" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400">
+            <h1 className="text-2xl font-bold text-cyan-400 tracking-tight">
               基金监管天眼
             </h1>
             <p className="text-xs text-slate-400">南京市医保基金智能监管指挥台 · 演示数据</p>
@@ -105,26 +105,26 @@ function App() {
         <div className="flex flex-wrap items-center gap-2 sm:gap-4">
           <button
             onClick={() => setIsScanModalOpen(true)}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/20 transition-colors"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-cyan-500/10 border border-cyan-500/25 text-cyan-400 hover:bg-cyan-500/20 hover:border-cyan-500/35 transition-colors"
           >
             <ScanLine className="w-4 h-4" />
             <span>启动智能扫描</span>
           </button>
           <button
             onClick={handleRefresh}
-            className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-800/50 border border-slate-700 text-slate-300 hover:bg-slate-700/50 transition-colors"
+            className="flex items-center justify-center w-9 h-9 rounded-lg bg-slate-800/60 border border-slate-700 text-slate-300 hover:bg-slate-700/60 transition-colors"
             title="刷新数据"
           >
             <RotateCcw className="w-4 h-4" />
           </button>
           <button
             onClick={toggleFullscreen}
-            className="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-800/50 border border-slate-700 text-slate-300 hover:bg-slate-700/50 transition-colors"
+            className="flex items-center justify-center w-9 h-9 rounded-lg bg-slate-800/60 border border-slate-700 text-slate-300 hover:bg-slate-700/60 transition-colors"
             title="全屏显示"
           >
             <Maximize2 className="w-4 h-4" />
           </button>
-          <div className="text-sm text-slate-400 font-mono">
+          <div className="text-sm text-slate-300 font-mono tabular-nums">
             {currentTime}
           </div>
         </div>

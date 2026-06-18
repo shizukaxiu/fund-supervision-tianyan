@@ -35,7 +35,7 @@ export function TrendChart({ overview }: TrendChartProps) {
                 initial={{ height: 0 }}
                 animate={{ height: `${height}%` }}
                 transition={{ duration: 0.8, delay: index * 0.1 }}
-                className="w-full max-w-[60px] rounded-t-lg bg-gradient-to-t from-cyan-600/60 to-cyan-400/80"
+                className="w-full max-w-[60px] rounded-t-md bg-cyan-500/70"
               />
               <div className="text-xs text-slate-300 text-center">{typeNames[type] || type}</div>
               <div className="text-sm font-semibold text-cyan-400">{count}</div>

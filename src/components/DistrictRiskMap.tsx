@@ -28,11 +28,11 @@ export function DistrictRiskMap({ overview }: DistrictRiskMapProps) {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.3, delay: index * 0.05 }}
-              className="p-3 rounded-lg bg-slate-800/40 border border-slate-700/50"
+              className="p-3 rounded-lg bg-slate-800/50 border border-slate-700/50"
             >
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm text-slate-200">{district}</span>
-                <span className="text-sm font-semibold text-rose-400">
+                <span className="text-sm font-semibold text-slate-100">
                   {formatCurrency(value)}
                 </span>
               </div>
@@ -41,7 +41,7 @@ export function DistrictRiskMap({ overview }: DistrictRiskMapProps) {
                   initial={{ width: 0 }}
                   animate={{ width: `${intensity * 100}%` }}
                   transition={{ duration: 1, delay: 0.3 + index * 0.05 }}
-                  className="h-full rounded-full bg-gradient-to-r from-cyan-500 to-rose-500"
+                  className="h-full rounded-full bg-cyan-500/80"
                 />
               </div>
             </motion.div>

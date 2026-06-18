@@ -22,7 +22,7 @@ interface KpiItem {
 
 function AnimatedNumber({ value, isCurrency }: { value: number; isCurrency: boolean }) {
   const motionValue = useMotionValue(0);
-  const springValue = useSpring(motionValue, { duration: 2000, bounce: 0 });
+  const springValue = useSpring(motionValue, { duration: 800, bounce: 0 });
   const displayValue = useTransform(springValue, (latest) =>
     isCurrency ? formatCurrency(latest) : formatNumber(Math.round(latest))
   );
@@ -31,7 +31,7 @@ function AnimatedNumber({ value, isCurrency }: { value: number; isCurrency: bool
     motionValue.set(value);
   }, [motionValue, value]);
 
-  return <motion.span>{displayValue}</motion.span>;
+  return <motion.span className="tabular-nums">{displayValue}</motion.span>;
 }
 
 export function KpiCards({ overview }: KpiCardsProps) {
@@ -89,16 +89,16 @@ export function KpiCards({ overview }: KpiCardsProps) {
         return (
           <motion.div
             key={kpi.key}
-            initial={{ opacity: 0, y: -20 }}
+            initial={{ opacity: 0, y: -12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: index * 0.1 }}
+            transition={{ duration: 0.35, delay: index * 0.05 }}
             className={`
-              tech-panel corner-decoration p-4 flex flex-col justify-between
-              ${isAbnormal ? 'hover:border-rose-500/40' : 'hover:border-cyan-500/40'}
-              transition-colors duration-300
+              tech-panel corner-decoration p-4 flex flex-col justify-center gap-2
+              ${isAbnormal ? 'hover:border-rose-500/30' : 'hover:border-cyan-500/30'}
+              transition-colors duration-200
             `}
           >
-            <div className="flex items-center gap-2 text-slate-400 text-sm">
+            <div className="flex items-center gap-2 text-slate-400 text-xs">
               <span className={isAbnormal ? 'text-rose-400' : 'text-cyan-400'}>
                 {kpi.icon}
               </span>
@@ -111,9 +111,6 @@ export function KpiCards({ overview }: KpiCardsProps) {
               `}
             >
               <AnimatedNumber value={value} isCurrency={kpi.isCurrency} />
-            </div>
-            <div className="text-xs text-slate-500">
-              {isAbnormal ? '需重点关注' : '正常监测中'}
             </div>
           </motion.div>
         );

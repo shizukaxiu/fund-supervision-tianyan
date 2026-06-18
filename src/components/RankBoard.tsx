@@ -30,8 +30,8 @@ export function RankBoard({ alerts }: RankBoardProps) {
             key={hospital}
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.3, delay: index * 0.05 }}
-            className="flex items-center gap-3 p-2 rounded-lg bg-slate-800/40 border border-slate-700/50"
+            transition={{ duration: 0.2, delay: Math.min(index * 0.03, 0.3) }}
+            className="flex items-center gap-3 p-2 rounded-lg bg-slate-800/50 border border-slate-700/50"
           >
             <div className={`
               w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold
@@ -40,7 +40,7 @@ export function RankBoard({ alerts }: RankBoardProps) {
               {index + 1}
             </div>
             <div className="flex-1 min-w-0">
-              <div className="text-sm text-slate-200 truncate">{hospital}</div>
+              <div className="text-sm text-slate-100 truncate">{hospital}</div>
             </div>
             <div className="text-sm font-semibold text-rose-400">
               ¥{amount.toFixed(2)}

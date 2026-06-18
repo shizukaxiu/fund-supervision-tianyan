@@ -20,6 +20,20 @@ interface NetworkMapModalProps {
 
 const MAP_SIZE = 1000;
 
+// 节点类型对应的颜色
+const typeColors: Record<string, string> = {
+  hospital: '#22d3ee',
+  doctor: '#fbbf24',
+  patient: '#f43f5e',
+  pharmacy: '#10b981',
+};
+
+// 团伙颜色池
+const gangColors = [
+  '#f43f5e', '#22d3ee', '#fbbf24', '#10b981',
+  '#a78bfa', '#fb923c', '#60a5fa', '#c084fc',
+];
+
 /** 医院名称在地图上的简称，避免主城区医院标签互相遮挡 */
 const HOSPITAL_SHORT_NAMES: Record<string, string> = {
   H001: '鼓楼医院',
@@ -99,18 +113,6 @@ export function NetworkMapModal({ network, records, alerts, selectedAlert, isOpe
       );
     });
   }, [alerts, records, selectedNodeId]);
-
-  const typeColors: Record<string, string> = {
-    hospital: '#22d3ee',
-    doctor: '#fbbf24',
-    patient: '#f43f5e',
-    pharmacy: '#10b981',
-  };
-
-  const gangColors = [
-    '#f43f5e', '#22d3ee', '#fbbf24', '#10b981',
-    '#a78bfa', '#fb923c', '#60a5fa', '#c084fc',
-  ];
 
   // 使用 Python 脚本基于真实 GeoJSON 投影生成的统一坐标
   const mapPositions = useMemo(() => network.mapPositions ?? {}, [network]);
@@ -225,6 +227,7 @@ export function NetworkMapModal({ network, records, alerts, selectedAlert, isOpe
       node: {
         state: {
           highlight: {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             size: (d: any) => d.data.baseSize * 1.3,
             lineWidth: 3,
             stroke: '#fff',
@@ -262,6 +265,7 @@ export function NetworkMapModal({ network, records, alerts, selectedAlert, isOpe
         'zoom-canvas',
         {
           type: 'drag-element',
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           enable: (event: any) => {
             const id = event.target?.id;
             // 禁止拖动医院节点（保持与地图对齐）
@@ -294,6 +298,7 @@ export function NetworkMapModal({ network, records, alerts, selectedAlert, isOpe
     // 首次渲染完成后同步一次，避免 StrictMode 下销毁后仍触发事件导致报错
     graph.once('afterrender', syncMapTransform);
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     graph.on('node:click', (event: any) => {
       const nodeId = event.target?.id || event?.data?.id;
       if (nodeId) {
@@ -354,7 +359,7 @@ export function NetworkMapModal({ network, records, alerts, selectedAlert, isOpe
           {/* 顶部工具栏 */}
           <div className="absolute top-4 left-4 right-4 z-10 flex items-center justify-between pointer-events-none">
             <div className="pointer-events-auto flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-cyan-500/10 border border-cyan-500/30">
+              <div className="p-2 rounded-lg bg-cyan-500/10 border border-cyan-500/20">
                 <MapIcon className="w-5 h-5 text-cyan-400" />
               </div>
               <div>
@@ -389,8 +394,8 @@ export function NetworkMapModal({ network, records, alerts, selectedAlert, isOpe
 
           {/* 右侧异常记录卡片：点击过滤地图，再次点击退出选择 */}
           <div className="absolute top-24 right-4 bottom-24 w-72 z-10 flex flex-col pointer-events-none">
-            <div className="pointer-events-auto flex flex-col h-full rounded-lg bg-slate-900/80 border border-slate-700/50 backdrop-blur-sm overflow-hidden">
-              <div className="flex items-center gap-2 px-3 py-2 border-b border-slate-700/50 bg-slate-800/40">
+            <div className="pointer-events-auto flex flex-col h-full rounded-xl bg-slate-900/85 border border-slate-700/50 backdrop-blur-sm overflow-hidden">
+              <div className="flex items-center gap-2 px-3 py-2 border-b border-slate-700/50 bg-slate-800/60">
                 <Bell className="w-3.5 h-3.5 text-cyan-400" />
                 <span className="text-xs font-medium text-slate-200">异常记录</span>
                 <span className="ml-auto text-[10px] text-slate-500">
@@ -422,8 +427,8 @@ export function NetworkMapModal({ network, records, alerts, selectedAlert, isOpe
                     onClick={() => setSelectedMapAlert(selectedMapAlert?.id === alert.id ? null : alert)}
                     className={`p-2.5 rounded-md cursor-pointer border transition-all duration-200 text-xs ${
                       selectedMapAlert?.id === alert.id
-                        ? 'bg-cyan-500/15 border-cyan-500/50'
-                        : 'bg-slate-800/40 border-slate-700/50 hover:border-slate-600'
+                        ? 'bg-cyan-500/10 border-cyan-500/35'
+                        : 'bg-slate-800/50 border-slate-700/50 hover:border-slate-600'
                     }`}
                   >
                     <div className="flex items-center justify-between mb-1">
@@ -443,7 +448,7 @@ export function NetworkMapModal({ network, records, alerts, selectedAlert, isOpe
 
           {/* 底部图例 */}
           <div className="absolute bottom-4 left-4 right-4 z-10 flex items-center justify-center pointer-events-none">
-            <div className="pointer-events-auto flex items-center gap-6 px-4 py-2 rounded-lg bg-slate-900/80 border border-slate-700/50 text-xs">
+            <div className="pointer-events-auto flex items-center gap-6 px-4 py-2 rounded-xl bg-slate-900/85 border border-slate-700/50 text-xs">
               <div className="flex items-center gap-2">
                 <Network className="w-3.5 h-3.5 text-cyan-400" />
                 <span className="text-slate-300">

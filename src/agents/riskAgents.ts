@@ -1,4 +1,4 @@
-import type { MedicalRecord, OverviewData } from '../types';
+import type { MedicalRecord, OverviewData, Alert } from '../types';
 
 /**
  * 基金监管天眼 - 批量风险识别 Agent 逻辑
@@ -20,7 +20,7 @@ export interface RiskAgent {
 export interface ScanResult {
   agents: RiskAgent[];
   overview: OverviewData;
-  alerts: any[];
+  alerts: Alert[];
 }
 
 /**
@@ -122,7 +122,7 @@ export async function runBatchScan(
  */
 function analyzeByAgent(agentId: string, records: MedicalRecord[]) {
   switch (agentId) {
-    case 'statistical':
+    case 'statistical': {
       const statisticalAbnormal = records.filter(
         r => r.visitCount7Days >= 7 || r.sameDrugCount30Days >= 5 || r.quantity > 90
       );
@@ -131,8 +131,9 @@ function analyzeByAgent(agentId: string, records: MedicalRecord[]) {
         confidence: 88,
         summary: `发现 ${statisticalAbnormal.length} 条统计异常记录，包括频繁就医、超量开药等`,
       };
-      
-    case 'behavior':
+    }
+
+    case 'behavior': {
       const behaviorAbnormal = records.filter(
         r => r.crossHospitalCount >= 3 || (r.visitType === '住院' && r.totalAmount < 500) || r.isDuplicatePrescription
       );
@@ -141,8 +142,9 @@ function analyzeByAgent(agentId: string, records: MedicalRecord[]) {
         confidence: 85,
         summary: `发现 ${behaviorAbnormal.length} 条行为模式异常，包括跨院重复开药、疑似挂床等`,
       };
-      
-    case 'medical':
+    }
+
+    case 'medical': {
       const medicalAbnormal = records.filter(
         r => r.isOverDose || r.isOverIndication
       );
@@ -151,8 +153,9 @@ function analyzeByAgent(agentId: string, records: MedicalRecord[]) {
         confidence: 92,
         summary: `发现 ${medicalAbnormal.length} 条医学合理性异常，包括超剂量、超适应症用药等`,
       };
-      
-    case 'drug':
+    }
+
+    case 'drug': {
       // 追溯码重复检测
       const traceCodeMap = new Map<string, number>();
       records.forEach(r => {
@@ -164,8 +167,9 @@ function analyzeByAgent(agentId: string, records: MedicalRecord[]) {
         confidence: 96,
         summary: `发现 ${traceAbnormal.length} 条药品追溯码异常，疑似串换药品或回流药`,
       };
-      
-    case 'gang':
+    }
+
+    case 'gang': {
       // 团伙检测：同一医生 + 同一药品 + 多个患者
       const doctorDrugMap = new Map<string, Set<string>>();
       records.forEach(r => {
@@ -181,7 +185,8 @@ function analyzeByAgent(agentId: string, records: MedicalRecord[]) {
         confidence: 82,
         summary: `发现 ${gangCount} 个疑似骗保团伙，涉及同一医生同一药品多个患者`,
       };
-      
+    }
+
     default:
       return { count: 0, confidence: 0, summary: '未识别异常' };
   }

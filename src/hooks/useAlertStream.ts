@@ -1,5 +1,9 @@
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useCallback, useRef } from 'react';
 import type { Alert } from '../types';
+
+interface AudioContextConstructor {
+  new (): AudioContext;
+}
 
 /**
  * 模拟实时告警推送
@@ -12,15 +16,21 @@ export function useAlertStream(
   onNewAlert: (alert: Alert) => void,
   interval: number = 8000
 ) {
-  const alertsRef = useRef(alerts);
-  alertsRef.current = alerts;
+  const alertsRef = useRef<Alert[]>(alerts);
 
   /**
    * 使用 Web Audio API 播放提示音
    */
   const playAlertSound = useCallback(() => {
     try {
-      const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const win = window as unknown as {
+        AudioContext: AudioContextConstructor;
+        webkitAudioContext?: AudioContextConstructor;
+      };
+      const Ctx = win.AudioContext || win.webkitAudioContext;
+      if (!Ctx) return;
+
+      const audioContext = new Ctx();
       const oscillator = audioContext.createOscillator();
       const gainNode = audioContext.createGain();
 
@@ -39,6 +49,10 @@ export function useAlertStream(
       console.warn('无法播放提示音:', error);
     }
   }, []);
+
+  useEffect(() => {
+    alertsRef.current = alerts;
+  }, [alerts]);
 
   useEffect(() => {
     if (alertsRef.current.length === 0) return;

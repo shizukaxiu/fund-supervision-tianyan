@@ -56,16 +56,16 @@ export function NodeDetailDrawer({ node, records, onClose }: NodeDetailDrawerPro
         animate={{ x: 0 }}
         exit={{ x: '100%' }}
         transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-        className="w-80 h-full tech-panel border-l border-cyan-500/20 pointer-events-auto flex flex-col"
+        className="w-80 h-full tech-panel border-l border-cyan-500/15 pointer-events-auto flex flex-col"
       >
         {/* 头部 */}
         <div className="flex items-center justify-between p-4 border-b border-slate-700/50">
           <div className="flex items-center gap-2">
-            <div className="p-1.5 rounded-lg bg-cyan-500/10 text-cyan-400">
+            <div className="p-1.5 rounded-lg bg-cyan-500/10 border border-cyan-500/15 text-cyan-400">
               {getIcon()}
             </div>
             <div>
-              <div className="text-sm text-slate-400">{getTypeName()}详情</div>
+              <div className="text-xs text-slate-400">{getTypeName()}详情</div>
               <div className="text-base font-semibold text-slate-100">{node.name}</div>
             </div>
           </div>
@@ -79,28 +79,28 @@ export function NodeDetailDrawer({ node, records, onClose }: NodeDetailDrawerPro
 
         {/* 统计卡片 */}
         <div className="p-4 grid grid-cols-2 gap-3">
-          <div className="p-3 rounded-lg bg-slate-800/40 border border-slate-700/50">
+          <div className="p-3 rounded-lg bg-slate-800/50 border border-slate-700/50">
             <div className="flex items-center gap-1 text-xs text-slate-400 mb-1">
               <Calendar className="w-3 h-3" />
               <span>关联记录</span>
             </div>
             <div className="text-xl font-bold text-cyan-400">{relatedRecords.length}</div>
           </div>
-          <div className="p-3 rounded-lg bg-slate-800/40 border border-slate-700/50">
+          <div className="p-3 rounded-lg bg-slate-800/50 border border-slate-700/50">
             <div className="flex items-center gap-1 text-xs text-slate-400 mb-1">
               <AlertTriangle className="w-3 h-3" />
               <span>异常记录</span>
             </div>
             <div className="text-xl font-bold text-rose-400">{abnormalRecords.length}</div>
           </div>
-          <div className="p-3 rounded-lg bg-slate-800/40 border border-slate-700/50">
+          <div className="p-3 rounded-lg bg-slate-800/50 border border-slate-700/50">
             <div className="flex items-center gap-1 text-xs text-slate-400 mb-1">
               <DollarSign className="w-3 h-3" />
               <span>涉及金额</span>
             </div>
             <div className="text-sm font-bold text-cyan-400">{formatCurrency(totalAmount)}</div>
           </div>
-          <div className="p-3 rounded-lg bg-slate-800/40 border border-slate-700/50">
+          <div className="p-3 rounded-lg bg-slate-800/50 border border-slate-700/50">
             <div className="flex items-center gap-1 text-xs text-slate-400 mb-1">
               <DollarSign className="w-3 h-3" />
               <span>异常金额</span>
@@ -111,7 +111,7 @@ export function NodeDetailDrawer({ node, records, onClose }: NodeDetailDrawerPro
 
         {/* 最近记录 */}
         <div className="flex-1 overflow-y-auto px-4 pb-4">
-          <div className="text-sm text-slate-300 font-medium mb-2">最近记录</div>
+          <div className="text-sm text-slate-200 font-medium mb-2">最近记录</div>
           <div className="space-y-2">
             {relatedRecords.slice(0, 10).map((record) => (
               <div

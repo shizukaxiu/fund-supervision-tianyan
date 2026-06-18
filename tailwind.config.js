@@ -36,20 +36,14 @@ export default {
         },
       },
       boxShadow: {
-        'panel': '0 0 20px rgba(34, 211, 238, 0.08), inset 0 0 0 1px rgba(34, 211, 238, 0.1)',
-        'panel-rose': '0 0 20px rgba(244, 63, 94, 0.08), inset 0 0 0 1px rgba(244, 63, 94, 0.1)',
-        'glow-cyan': '0 0 30px rgba(34, 211, 238, 0.2)',
+        // 克制：仅 subtle 内发光，避免宽外阴影
+        'panel': 'inset 0 0 0 1px rgba(34, 211, 238, 0.05)',
+        'panel-rose': 'inset 0 0 0 1px rgba(244, 63, 94, 0.05)',
+        'glow-cyan': '0 0 16px rgba(34, 211, 238, 0.12)',
       },
       animation: {
         'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-        'scan-line': 'scanLine 2s linear infinite',
       },
-      keyframes: {
-        scanLine: {
-          '0%': { transform: 'translateY(-100%)' },
-          '100%': { transform: 'translateY(100%)' },
-        }
-      }
     },
   },
   plugins: [],

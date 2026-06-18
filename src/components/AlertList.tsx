@@ -66,7 +66,7 @@ export function AlertList({ alerts, selectedAlert, onSelectAlert }: AlertListPro
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="搜索告警类型、医院、患者..."
-          className="w-full pl-8 pr-7 py-1.5 text-xs rounded-lg bg-slate-800/40 border border-slate-700/50 text-slate-200 placeholder-slate-500 focus:outline-none focus:border-cyan-500/50 transition-colors"
+          className="w-full pl-8 pr-7 py-1.5 text-xs rounded-lg bg-slate-800/60 border border-slate-700/60 text-slate-200 placeholder-slate-400 focus:outline-none focus:border-cyan-500/40 focus:bg-slate-800/80 transition-colors"
         />
         {searchQuery && (
           <button
@@ -92,8 +92,8 @@ export function AlertList({ alerts, selectedAlert, onSelectAlert }: AlertListPro
               className={`
                 px-2 py-1 rounded text-xs border transition-all duration-200
                 ${levelFilter === level
-                  ? 'bg-cyan-500/20 border-cyan-500/50 text-cyan-400'
-                  : 'bg-slate-800/40 border-slate-700/50 text-slate-400 hover:border-slate-600'
+                  ? 'bg-cyan-500/10 border-cyan-500/30 text-cyan-400'
+                  : 'bg-slate-800/50 border-slate-700/50 text-slate-400 hover:border-slate-600 hover:text-slate-300'
                 }
               `}
             >
@@ -110,15 +110,15 @@ export function AlertList({ alerts, selectedAlert, onSelectAlert }: AlertListPro
             key={alert.id}
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.3, delay: index * 0.05 }}
+            transition={{ duration: 0.2, delay: Math.min(index * 0.03, 0.3) }}
             onClick={() => onSelectAlert(selectedAlert?.id === alert.id ? null : alert)}
             className={`
-              p-3 rounded-lg cursor-pointer border transition-all duration-200
+              p-3 rounded-lg cursor-pointer border transition-colors duration-200
               ${selectedAlert?.id === alert.id 
-                ? 'bg-cyan-500/10 border-cyan-500/40' 
+                ? 'bg-cyan-500/10 border-cyan-500/35' 
                 : alert.status === '新发现'
-                ? 'bg-rose-500/10 border-rose-500/40 animate-pulse-slow'
-                : 'bg-slate-800/40 border-slate-700/50 hover:border-slate-600'
+                ? 'bg-rose-500/8 border-rose-500/30'
+                : 'bg-slate-800/50 border-slate-700/50 hover:border-slate-600'
               }
             `}
           >
@@ -128,13 +128,13 @@ export function AlertList({ alerts, selectedAlert, onSelectAlert }: AlertListPro
                 {alert.level}
               </span>
             </div>
-            <div className="text-sm text-slate-200 font-medium truncate">
+            <div className="text-sm text-slate-100 font-medium truncate">
               {alert.type}
             </div>
             <div className="text-xs text-slate-400 truncate mt-1">
               {alert.hospital} · {alert.patient}
             </div>
-            <div className="text-xs text-slate-500 mt-1">
+            <div className="text-[11px] text-slate-500 mt-1">
               {alert.time}
             </div>
           </motion.div>
