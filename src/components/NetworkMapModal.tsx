@@ -18,6 +18,62 @@ interface NetworkMapModalProps {
 
 const MAP_SIZE = 1000;
 
+/** 医院名称在地图上的简称，避免主城区医院标签互相遮挡 */
+const HOSPITAL_SHORT_NAMES: Record<string, string> = {
+  H001: '鼓楼医院',
+  H002: '省人医',
+  H003: '市一医院',
+  H004: '中大医院',
+  H005: '市中医院',
+  H006: '南医二附院',
+  H007: '江宁医院',
+  H008: '栖霞区医院',
+  H009: '雨花台医院',
+  H010: '建邺医院',
+};
+
+/** 对距离过近的医院做轻微斥力分离，仅影响显示位置，不改变真实投影坐标 */
+function separateHospitals(
+  positions: Record<string, { x: number; y: number }>,
+  minDistance = 60,
+  iterations = 40
+): Record<string, { x: number; y: number }> {
+  const hospitalIds = Object.keys(positions);
+  if (hospitalIds.length < 2) return positions;
+
+  const result: Record<string, { x: number; y: number }> = {};
+  for (const id of hospitalIds) {
+    result[id] = { ...positions[id] };
+  }
+
+  for (let i = 0; i < iterations; i++) {
+    let moved = false;
+    for (let a = 0; a < hospitalIds.length; a++) {
+      for (let b = a + 1; b < hospitalIds.length; b++) {
+        const idA = hospitalIds[a];
+        const idB = hospitalIds[b];
+        const posA = result[idA];
+        const posB = result[idB];
+        const dx = posB.x - posA.x;
+        const dy = posB.y - posA.y;
+        const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+        if (dist < minDistance) {
+          const overlap = (minDistance - dist) / 2;
+          const offsetX = (dx / dist) * overlap;
+          const offsetY = (dy / dist) * overlap;
+          result[idA].x -= offsetX;
+          result[idA].y -= offsetY;
+          result[idB].x += offsetX;
+          result[idB].y += offsetY;
+          moved = true;
+        }
+      }
+    }
+    if (!moved) break;
+  }
+  return result;
+}
+
 export function NetworkMapModal({ network, records, selectedAlert, isOpen, onClose }: NetworkMapModalProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const graphRef = useRef<Graph | null>(null);
@@ -51,7 +107,20 @@ export function NetworkMapModal({ network, records, selectedAlert, isOpen, onClo
     const centerX = containerWidth / 2;
     const centerY = containerHeight / 2;
 
+    // 医院节点先做轻微斥力分离，避免主城区医院密集重叠
+    const hospitalPositions: Record<string, { x: number; y: number }> = {};
+    network.nodes.forEach((node) => {
+      if (node.type === 'hospital') {
+        const pos = mapPositions[node.id] ?? (hospitalMapCoords as Record<string, { x: number; y: number }>)[node.id];
+        if (pos) hospitalPositions[node.id] = { x: pos.x * scale + offsetX, y: pos.y * scale + offsetY };
+      }
+    });
+    const separatedHospitals = separateHospitals(hospitalPositions, 90 * scale, 60);
+
     const getNodePosition = (node: NetworkNode) => {
+      if (node.type === 'hospital' && separatedHospitals[node.id]) {
+        return separatedHospitals[node.id];
+      }
       const pos = mapPositions[node.id];
       if (pos) return { x: pos.x * scale + offsetX, y: pos.y * scale + offsetY };
       // fallback：医院节点使用独立坐标表，其余居中
@@ -72,9 +141,12 @@ export function NetworkMapModal({ network, records, selectedAlert, isOpen, onClo
     const nodes = sortedNodes.map((node) => {
       const pos = getNodePosition(node);
       const isHospital = node.type === 'hospital';
+      const isDoctor = node.type === 'doctor';
       const baseSize = isHospital
-        ? 22
-        : Math.max(10, Math.min(28, node.value / 260));
+        ? 14
+        : isDoctor
+          ? Math.max(7, Math.min(16, node.value / 400))
+          : Math.max(5, Math.min(12, node.value / 600));
       const gangColor = node.gangId
         ? gangColors[parseInt(node.gangId.replace('G', '')) % gangColors.length]
         : typeColors[node.type];
@@ -84,16 +156,17 @@ export function NetworkMapModal({ network, records, selectedAlert, isOpen, onClo
         style: {
           x: pos.x,
           y: pos.y,
-          labelText: node.name,
+          labelText: isHospital ? (HOSPITAL_SHORT_NAMES[node.id] ?? node.name) : node.name,
           labelFill: '#e2e8f0',
-          labelFontSize: isHospital ? 11 : 9,
-          labelMaxWidth: 120,
-          labelOffsetY: isHospital ? -8 : 0,
+          labelFontSize: isHospital ? 9 : 9,
+          labelMaxWidth: 100,
+          labelOffsetX: isHospital ? 10 : 0,
+          labelOffsetY: isHospital ? -4 : (isDoctor ? -5 : 0),
           size: baseSize,
           fill: gangColor,
-          stroke: isHospital ? typeColors.hospital : (node.gangId ? '#fff' : gangColor),
-          lineWidth: isHospital ? 1.5 : (node.gangId ? 2 : 1),
-          opacity: 0.95,
+          stroke: isHospital ? '#fff' : (node.gangId ? '#fff' : gangColor),
+          lineWidth: isHospital ? 2 : (node.gangId ? 2 : 1),
+          opacity: isHospital ? 1 : 0.8,
           labelBackground: isHospital,
           labelBackgroundFill: 'rgba(15,23,42,0.7)',
           labelBackgroundRadius: 4,
