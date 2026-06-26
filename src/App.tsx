@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { Shield, ScanLine, Maximize2, RotateCcw } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { Shield, ScanLine, Upload, Maximize2, RotateCcw } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useDashboardStore } from './store/dashboardStore';
 import { KpiCards } from './components/KpiCards';
@@ -11,7 +11,7 @@ import { TrendChart } from './components/TrendChart';
 import { RankBoard } from './components/RankBoard';
 import { ScanModal } from './components/ScanModal';
 import { FraudNetwork } from './components/FraudNetwork';
-import type { OverviewData, Alert as AlertType } from './types';
+import type { OverviewData, Alert as AlertType, MedicalRecord } from './types';
 
 /**
  * 基金监管天眼 - 主应用组件
@@ -28,6 +28,7 @@ function App() {
     isLoading,
     currentTime,
     loadData,
+    clearScanResults,
     selectAlert,
     addAlert,
     updateTime,
@@ -37,6 +38,50 @@ function App() {
   useAlertStream(alerts, addAlert, 10000);
 
   const [isScanModalOpen, setIsScanModalOpen] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // 上传数据：支持单 JSON 文件（整合全部 mock 数据）或仅 records 数组
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const text = String(e.target?.result || '');
+        const data: unknown = JSON.parse(text);
+
+        let uploadedRecords: MedicalRecord[] | undefined;
+
+        if (Array.isArray(data)) {
+          uploadedRecords = data as MedicalRecord[];
+        } else if (data && typeof data === 'object') {
+          const bundle = data as Record<string, unknown>;
+          uploadedRecords = Array.isArray(bundle.records) ? bundle.records as MedicalRecord[] : undefined;
+        }
+
+        if (!Array.isArray(uploadedRecords)) {
+          window.alert('文件格式错误：请上传整合 mock 数据对象或 records 数组');
+          return;
+        }
+
+        useDashboardStore.setState({
+          records: uploadedRecords,
+          overview: null,
+          alerts: [],
+          selectedAlert: null,
+        });
+        window.alert(`数据上传成功：共 ${uploadedRecords.length} 条记录，请点击“启动智能扫描”开始分析`);
+      } catch (error) {
+        console.error('上传数据解析失败:', error);
+        window.alert('无法解析该文件，请确保是有效的 JSON');
+      }
+    };
+    reader.readAsText(file);
+
+    // 允许重复上传同一文件
+    event.target.value = '';
+  };
 
   // 全屏切换
   const toggleFullscreen = () => {
@@ -47,9 +92,9 @@ function App() {
     }
   };
 
-  // 刷新数据
+  // 刷新：清空扫描结果，恢复未扫描状态
   const handleRefresh = () => {
-    loadData();
+    clearScanResults();
   };
 
   // 加载数据
@@ -78,14 +123,6 @@ function App() {
     );
   }
 
-  if (!overview) {
-    return (
-      <div className="w-full h-full flex items-center justify-center text-rose-400">
-        数据加载失败，请检查 mock 数据文件
-      </div>
-    );
-  }
-
   return (
     <div className="w-full h-screen p-3 lg:p-4 flex flex-col gap-3 lg:gap-4 bg-slate-950 overflow-hidden">
       {/* 顶部标题栏 */}
@@ -102,7 +139,7 @@ function App() {
           </div>
         </div>
         
-        <div className="flex flex-wrap items-center gap-2 sm:gap-4">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
           <button
             onClick={() => setIsScanModalOpen(true)}
             className="flex items-center gap-2 px-4 py-2 rounded-lg bg-cyan-500/10 border border-cyan-500/25 text-cyan-400 hover:bg-cyan-500/20 hover:border-cyan-500/35 transition-colors"
@@ -110,6 +147,24 @@ function App() {
             <ScanLine className="w-4 h-4" />
             <span>启动智能扫描</span>
           </button>
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 hover:bg-emerald-500/20 hover:border-emerald-500/35 transition-colors"
+            title="上传数据"
+          >
+            <Upload className="w-4 h-4" />
+            <span>上传数据</span>
+          </button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".json,.csv"
+            className="hidden"
+            onChange={handleFileUpload}
+          />
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2 sm:gap-4">
           <button
             onClick={handleRefresh}
             className="flex items-center justify-center w-9 h-9 rounded-lg bg-slate-800/60 border border-slate-700 text-slate-300 hover:bg-slate-700/60 transition-colors"
@@ -158,6 +213,7 @@ function App() {
                 records={records}
                 alerts={alerts}
                 selectedAlert={selectedAlert}
+                overview={overview}
               />
             </div>
           )}

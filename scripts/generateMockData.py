@@ -799,10 +799,10 @@ def generate_overview(records, gangs_count=0):
     total_amount = sum(r["totalAmount"] for r in records)
     abnormal_amount = sum(r["totalAmount"] for r in abnormal_records)
     
-    # 统计各区风险金额
-    district_risk = defaultdict(float)
+    # 统计各区风险记录数（包含 0 条异常的区）
+    district_risk = {d: 0 for d in DISTRICTS}
     for r in abnormal_records:
-        district_risk[r["district"]] += r["totalAmount"]
+        district_risk[r["district"]] += 1
     
     # 统计异常类型
     abnormal_type_count = defaultdict(int)
@@ -818,7 +818,7 @@ def generate_overview(records, gangs_count=0):
         "highRiskRecords": len(high_risk_records),
         "highRiskAmount": round(sum(r["totalAmount"] for r in high_risk_records), 2),
         "suspectedGangs": gangs_count,
-        "districtRisk": {k: round(v, 2) for k, v in district_risk.items()},
+        "districtRisk": dict(district_risk),
         "abnormalTypeCount": dict(abnormal_type_count),
     }
 

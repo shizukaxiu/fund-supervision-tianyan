@@ -1,15 +1,15 @@
 import { motion } from 'framer-motion';
 import { MapPin } from 'lucide-react';
 import type { OverviewData } from '../types';
-import { formatCurrency } from '../utils/formatters';
+
 
 interface DistrictRiskMapProps {
-  overview: OverviewData;
+  overview: OverviewData | null;
 }
 
 export function DistrictRiskMap({ overview }: DistrictRiskMapProps) {
-  const districts = Object.entries(overview.districtRisk).sort((a, b) => b[1] - a[1]);
-  const maxValue = Math.max(...districts.map(([, value]) => value));
+  const districts = overview ? Object.entries(overview.districtRisk).sort((a, b) => b[1] - a[1]) : [];
+  const maxValue = districts.length > 0 ? Math.max(...districts.map(([, value]) => value)) : 1;
 
   return (
     <div className="tech-panel corner-decoration h-full flex flex-col p-4">
@@ -19,6 +19,11 @@ export function DistrictRiskMap({ overview }: DistrictRiskMapProps) {
       </div>
       
       <div className="flex-1 grid grid-cols-2 gap-3 content-start">
+        {districts.length === 0 && (
+          <div className="col-span-2 flex items-center justify-center text-slate-500 text-sm">
+            暂无风险分布数据
+          </div>
+        )}
         {districts.map(([district, value], index) => {
           const intensity = maxValue > 0 ? value / maxValue : 0;
           
@@ -33,7 +38,7 @@ export function DistrictRiskMap({ overview }: DistrictRiskMapProps) {
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm text-slate-200">{district}</span>
                 <span className="text-sm font-semibold text-slate-100">
-                  {formatCurrency(value)}
+                  {value} 条
                 </span>
               </div>
               <div className="w-full h-2 bg-slate-700/50 rounded-full overflow-hidden">

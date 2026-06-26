@@ -59,6 +59,7 @@ export interface OverviewData {
   highRiskRecords: number;
   highRiskAmount: number;
   suspectedGangs: number;
+  /** 各区异常记录数（按 district 聚合） */
   districtRisk: Record<string, number>;
   abnormalTypeCount: Record<string, number>;
 }

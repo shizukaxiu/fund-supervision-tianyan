@@ -203,9 +203,10 @@ function generateScanOverview(records: MedicalRecord[]): OverviewData {
   const totalAmount = records.reduce((sum, r) => sum + r.totalAmount, 0);
   const abnormalAmount = abnormalRecords.reduce((sum, r) => sum + r.totalAmount, 0);
   
-  const districtRisk: Record<string, number> = {};
+  const DISTRICTS = ['鼓楼区', '玄武区', '秦淮区', '建邺区', '雨花台区', '栖霞区', '江宁区'];
+  const districtRisk: Record<string, number> = Object.fromEntries(DISTRICTS.map(d => [d, 0]));
   abnormalRecords.forEach(r => {
-    districtRisk[r.district] = (districtRisk[r.district] || 0) + r.totalAmount;
+    districtRisk[r.district] = (districtRisk[r.district] || 0) + 1;
   });
   
   const abnormalTypeCount: Record<string, number> = {};

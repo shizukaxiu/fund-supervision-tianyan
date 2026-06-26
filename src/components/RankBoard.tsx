@@ -25,6 +25,11 @@ export function RankBoard({ alerts }: RankBoardProps) {
       </div>
       
       <div className="flex-1 overflow-y-auto space-y-2 pr-1">
+        {ranked.length === 0 && (
+          <div className="h-full flex items-center justify-center text-slate-500 text-sm">
+            暂无风险机构数据
+          </div>
+        )}
         {ranked.map(([hospital, amount], index) => (
           <motion.div
             key={hospital}

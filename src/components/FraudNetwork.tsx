@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Graph } from '@antv/g6';
 import { Network, Map as MapIcon } from 'lucide-react';
-import type { NetworkData, Alert, MedicalRecord, NetworkNode } from '../types';
+import type { NetworkData, Alert, MedicalRecord, NetworkNode, OverviewData } from '../types';
 import { NodeDetailDrawer } from './NodeDetailDrawer';
 import { NetworkMapModal } from './NetworkMapModal';
 
@@ -10,6 +10,7 @@ interface FraudNetworkProps {
   records: MedicalRecord[];
   alerts: Alert[];
   selectedAlert: Alert | null;
+  overview: OverviewData | null;
 }
 
 /**
@@ -29,7 +30,7 @@ const gangColors = [
   '#a78bfa', '#fb923c', '#60a5fa', '#c084fc',
 ];
 
-export function FraudNetwork({ network, records, alerts, selectedAlert }: FraudNetworkProps) {
+export function FraudNetwork({ network, records, alerts, selectedAlert, overview }: FraudNetworkProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const graphRef = useRef<Graph | null>(null);
   const [selectedNode, setSelectedNode] = useState<NetworkNode | null>(null);
@@ -37,6 +38,19 @@ export function FraudNetwork({ network, records, alerts, selectedAlert }: FraudN
 
   useEffect(() => {
     if (!containerRef.current) return;
+
+    // 未启动扫描时只保留卡片框架，不渲染节点和连线
+    if (!overview) {
+      if (graphRef.current) {
+        try {
+          graphRef.current.destroy();
+        } catch {
+          // ignore
+        }
+        graphRef.current = null;
+      }
+      return;
+    }
 
     // 构建 G6 数据
     const nodes = network.nodes.map(node => {
@@ -145,7 +159,7 @@ export function FraudNetwork({ network, records, alerts, selectedAlert }: FraudN
       graph.destroy();
       graphRef.current = null;
     };
-  }, [network]);
+  }, [network, overview]);
 
   // 当选中告警变化时，聚焦并高亮相关节点路径
   useEffect(() => {
@@ -210,16 +224,20 @@ export function FraudNetwork({ network, records, alerts, selectedAlert }: FraudN
       <div className="panel-title">
         <Network className="w-4 h-4" />
         <span>风险网络图谱</span>
-        <button
-          onClick={() => setIsMapOpen(true)}
-          className="ml-auto mr-2 flex items-center gap-1 px-2 py-1 rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 hover:bg-cyan-500/20 transition-colors text-xs"
-          title="地图模式"
-        >
-          <MapIcon className="w-3 h-3" />
-          <span>地图模式</span>
-        </button>
+        {overview && (
+          <button
+            onClick={() => setIsMapOpen(true)}
+            className="ml-auto mr-2 flex items-center gap-1 px-2 py-1 rounded-lg bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 hover:bg-cyan-500/20 transition-colors text-xs"
+            title="地图模式"
+          >
+            <MapIcon className="w-3 h-3" />
+            <span>地图模式</span>
+          </button>
+        )}
         <span className="text-xs text-slate-500">
-          {network.nodes.length} 节点 · {network.edges.length} 关系 · {network.gangs} 团伙
+          {overview
+            ? `${network.nodes.length} 节点 · ${network.edges.length} 关系 · ${network.gangs} 团伙`
+            : '—'}
         </span>
       </div>
       
@@ -243,6 +261,11 @@ export function FraudNetwork({ network, records, alerts, selectedAlert }: FraudN
       </div>
       
       <div ref={containerRef} className="flex-1 min-h-0 relative">
+        {!overview && (
+          <div className="absolute inset-0 flex items-center justify-center text-slate-500 text-sm z-10">
+            暂无风险网络数据，请先启动智能扫描
+          </div>
+        )}
         <NodeDetailDrawer
           node={selectedNode}
           records={records}

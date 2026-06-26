@@ -60,6 +60,9 @@
 │   │   └── useAlertStream.ts  # 实时告警推送 hook
 │   ├── agents/
 │   │   └── riskAgents.ts      # 批量风险识别 Agent 逻辑
+│   ├── services/              # LLM / API 服务层
+│   │   ├── deepseek.ts        # DeepSeek API 客户端
+│   │   └── llmAnalysis.ts     # 生成研判报告与飞检任务
 │   ├── mock/                  # mock 数据（由 Python 脚本生成）
 │   │   ├── records.json
 │   │   ├── overview.json
@@ -149,6 +152,10 @@
 # 安装依赖
 npm install
 
+# 配置 DeepSeek API Key（如使用 LLM 研判）
+cp .env.example .env
+# 编辑 .env，填写 VITE_DEEPSEEK_API_KEY
+
 # 启动开发服务器
 npm run dev
 
@@ -191,7 +198,7 @@ python scripts/generateMockData.py
 
 ## 八、待优化方向（可选）
 
-- [ ] 接入真实 LLM 重新研判（需要 API key）
+- [x] 接入真实 LLM 重新研判（DeepSeek API，报告文本 + 飞检任务建议走 LLM）
 - [ ] 动态导入 G6 减少 bundle 体积（当前 1.77MB）
 - [ ] 数据导出功能（PDF/Excel）
 - [ ] 更多时间序列图表

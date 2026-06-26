@@ -1,8 +1,10 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FileText, ClipboardList, Sparkles, Search, Brain, Scale, AlertTriangle, ShieldCheck, Gavel, ChevronRight, CheckCircle2, GitMerge } from 'lucide-react';
+import { FileText, ClipboardList, Sparkles, Search, Brain, Scale, AlertTriangle, ShieldCheck, Gavel, ChevronRight, CheckCircle2, GitMerge, Loader2, Bot } from 'lucide-react';
 import type { Alert, CaseAnalysis, AnalysisReport, InspectionTask, MedicalRecord } from '../types';
 import { getRiskLevelColor } from '../utils/formatters';
+import { generateLLMAnalysis, canUseLLM, type LLMAnalysisResult } from '../services/llmAnalysis';
+import { generateFallbackCaseAnalysis } from '../services/fallbackAnalysis';
 
 interface AnalysisPanelProps {
   alert: Alert | null;
@@ -21,20 +23,21 @@ const agentIcons: Record<string, React.ReactNode> = {
 };
 
 interface AnalysisAgentsProps {
-  analysis: CaseAnalysis | null;
-  onReportReady?: (ready: boolean) => void;
+  analysis: CaseAnalysis;
+  report?: AnalysisReport | null;
 }
 
 /**
  * Agent 动画子组件：每次 alert 变化时通过 key 重置，内部自行管理动画状态，
  * 避免在父组件 effect 中同步 setState 触发级联渲染。
  */
-function AnalysisAgents({ analysis, onReportReady }: AnalysisAgentsProps) {
+function AnalysisAgents({ analysis, report }: AnalysisAgentsProps) {
   const [visibleAgents, setVisibleAgents] = useState(0);
   const [showReport, setShowReport] = useState(false);
 
+  const displayReport = report ?? analysis.report;
+
   useEffect(() => {
-    if (!analysis) return;
     // 初始状态由 key 重置保证；此处仅在异步 interval 回调中更新状态
     let current = 0;
     const timer = setInterval(() => {
@@ -44,15 +47,12 @@ function AnalysisAgents({ analysis, onReportReady }: AnalysisAgentsProps) {
         clearInterval(timer);
         setTimeout(() => {
           setShowReport(true);
-          onReportReady?.(true);
         }, 500);
       }
     }, 600);
 
     return () => clearInterval(timer);
-  }, [analysis, onReportReady]);
-
-  if (!analysis) return null;
+  }, [analysis.alertId, analysis.agents.length]);
 
   return (
     <>
@@ -134,7 +134,7 @@ function AnalysisAgents({ analysis, onReportReady }: AnalysisAgentsProps) {
 
       {/* 研判报告 */}
       <AnimatePresence>
-        {showReport && analysis.report && (
+        {showReport && displayReport && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -144,7 +144,7 @@ function AnalysisAgents({ analysis, onReportReady }: AnalysisAgentsProps) {
               <FileText className="w-4 h-4 text-emerald-400" />
               <span>综合研判报告</span>
             </div>
-            <ReportContent report={analysis.report} />
+            <ReportContent report={displayReport} />
           </motion.div>
         )}
       </AnimatePresence>
@@ -154,13 +154,14 @@ function AnalysisAgents({ analysis, onReportReady }: AnalysisAgentsProps) {
 
 interface TaskPanelProps {
   task: InspectionTask;
+  isLLM?: boolean;
 }
 
 /**
  * 飞检任务书子组件：用 key 跟随 alert/task 重置，内部管理状态流转，
  * 避免父组件在 effect 中同步 setState。
  */
-function TaskPanel({ task }: TaskPanelProps) {
+function TaskPanel({ task, isLLM }: TaskPanelProps) {
   const [status, setStatus] = useState<string>('待派发');
 
   const statusSteps = ['待派发', '已派发', '已核查', '已办结'];
@@ -181,9 +182,16 @@ function TaskPanel({ task }: TaskPanelProps) {
 
   return (
     <div className="space-y-3 text-sm">
-      <div className="flex justify-between">
+      <div className="flex justify-between items-center">
         <span className="text-slate-400">任务编号：</span>
-        <span className="text-slate-200 font-mono">{task.taskNo}</span>
+        <div className="flex items-center gap-2">
+          <span className="text-slate-200 font-mono">{task.taskNo}</span>
+          {isLLM && (
+            <span className="px-1.5 py-0.5 rounded text-[10px] bg-cyan-500/10 border border-cyan-500/30 text-cyan-400">
+              LLM
+            </span>
+          )}
+        </div>
       </div>
       <div className="flex justify-between">
         <span className="text-slate-400">核查对象：</span>
@@ -251,8 +259,104 @@ function TaskPanel({ task }: TaskPanelProps) {
   );
 }
 
-export function AnalysisPanel({ alert, records, caseAnalysis }: AnalysisPanelProps) {
+interface TaskSectionProps {
+  alertId: string;
+  task: InspectionTask;
+  hasLLMResult: boolean;
+  hasFallback: boolean;
+}
+
+/**
+ * 飞检任务区域：通过 key 跟随 alert 切换自动重置 showTask 状态，
+ * 保证每次点进新告警都不会保留上一次的飞检任务书。
+ */
+function TaskSection({ alertId, task, hasLLMResult, hasFallback }: TaskSectionProps) {
   const [showTask, setShowTask] = useState(false);
+
+  return (
+    <>
+      {/* 生成飞检任务按钮 */}
+      <button
+        onClick={() => setShowTask(true)}
+        className="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-rose-500/10 border border-rose-500/25 text-rose-400 hover:bg-rose-500/20 hover:border-rose-500/35 transition-colors"
+      >
+        <ClipboardList className="w-4 h-4" />
+        <span>生成飞检任务</span>
+      </button>
+
+      {/* 飞检任务书 */}
+      <AnimatePresence>
+        {showTask && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="p-4 rounded-lg bg-slate-800/50 border border-slate-700/50"
+          >
+            <div className="flex items-center gap-2 text-slate-100 font-semibold mb-3">
+              <Gavel className="w-4 h-4 text-amber-400" />
+              <span>飞检任务书</span>
+              {hasLLMResult && (
+                <span className="ml-auto px-1.5 py-0.5 rounded text-[10px] bg-cyan-500/10 border border-cyan-500/30 text-cyan-400">
+                  LLM 生成
+                </span>
+              )}
+              {hasFallback && (
+                <span className="ml-auto px-1.5 py-0.5 rounded text-[10px] bg-slate-500/10 border border-slate-500/30 text-slate-400">
+                  本地规则
+                </span>
+              )}
+            </div>
+            <TaskPanel
+              key={`${alertId}-${task.taskNo}-${hasLLMResult ? 'llm' : 'fallback'}`}
+              task={task}
+              isLLM={hasLLMResult}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
+  );
+}
+
+interface LLMReportLoaderProps {
+  alert: Alert;
+  record: MedicalRecord;
+  onComplete: (alertId: string, result: LLMAnalysisResult | null, status: 'success' | 'error') => void;
+}
+
+/**
+ * LLM 研判加载器
+ *
+ * 通过 key 跟随 alert 切换自动重置，避免在父组件 effect 中同步 setState。
+ */
+function LLMReportLoader({ alert, record, onComplete }: LLMReportLoaderProps) {
+  useEffect(() => {
+    if (!canUseLLM()) return;
+
+    let cancelled = false;
+    generateLLMAnalysis(record, alert)
+      .then((result) => {
+        if (!cancelled) {
+          onComplete(alert.id, result, 'success');
+        }
+      })
+      .catch((error) => {
+        if (!cancelled) {
+          console.error('LLM 研判失败:', error);
+          onComplete(alert.id, null, 'error');
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [alert, record, onComplete]);
+
+  return null;
+}
+
+export function AnalysisPanel({ alert, records, caseAnalysis }: AnalysisPanelProps) {
+  const [llmMap, setLlmMap] = useState<Record<string, { result: LLMAnalysisResult | null; status: 'success' | 'error' }>>({});
 
   const currentRecord = useMemo(() => {
     if (!alert) return null;
@@ -263,6 +367,36 @@ export function AnalysisPanel({ alert, records, caseAnalysis }: AnalysisPanelPro
     if (!alert) return null;
     return caseAnalysis.find(a => a.alertId === alert.id) || null;
   }, [alert, caseAnalysis]);
+
+  const fallbackAnalysis = useMemo(() => {
+    if (!alert || !currentRecord || currentAnalysis) return null;
+    return generateFallbackCaseAnalysis(currentRecord, alert);
+  }, [alert, currentRecord, currentAnalysis]);
+
+  // 用于 Agent 动画的研判数据：优先使用 mock，没有 mock 时使用兜底生成
+  const analysisForAgents = useMemo(() => {
+    return currentAnalysis ?? fallbackAnalysis ?? null;
+  }, [currentAnalysis, fallbackAnalysis]);
+
+  const handleLLMComplete = useCallback((alertId: string, result: LLMAnalysisResult | null, status: 'success' | 'error') => {
+    setLlmMap((prev) => ({ ...prev, [alertId]: { result, status } }));
+  }, []);
+
+  const llmEntry = alert ? llmMap[alert.id] : undefined;
+  const llmResult = llmEntry?.result ?? null;
+  const llmStatus: 'idle' | 'loading' | 'success' | 'error' =
+    !alert || !currentRecord ? 'idle' : !canUseLLM() ? 'idle' : llmEntry ? llmEntry.status : 'loading';
+
+  const displayReport = useMemo(() => {
+    return llmResult?.report ?? analysisForAgents?.report ?? null;
+  }, [llmResult, analysisForAgents]);
+
+  const displayTask = useMemo(() => {
+    return llmResult?.task ?? analysisForAgents?.task ?? null;
+  }, [llmResult, analysisForAgents]);
+
+  const hasLLMResult = llmStatus === 'success' && llmResult !== null;
+  const hasFallback = !hasLLMResult && fallbackAnalysis !== null;
 
   if (!alert) {
     return (
@@ -289,6 +423,15 @@ export function AnalysisPanel({ alert, records, caseAnalysis }: AnalysisPanelPro
       </div>
 
       <div className="flex-1 overflow-y-auto space-y-3 pr-1">
+        {/* DeepSeek LLM 研判加载器（无 UI，仅发起请求） */}
+        {alert && currentRecord && canUseLLM() && (
+          <LLMReportLoader
+            alert={alert}
+            record={currentRecord}
+            onComplete={handleLLMComplete}
+          />
+        )}
+
         {/* 原始记录详情 */}
         {currentRecord && (
           <motion.div
@@ -325,40 +468,45 @@ export function AnalysisPanel({ alert, records, caseAnalysis }: AnalysisPanelPro
           <div className="text-sm text-slate-400 mt-1 leading-relaxed">{alert.reason}</div>
         </div>
 
-        {/* Agent 协同动画 —— 用 key 重置 */}
-        <AnalysisAgents
-          key={alert.id}
-          analysis={currentAnalysis}
-          onReportReady={() => setShowTask(false)}
-        />
-
-        {/* 生成飞检任务按钮 */}
-        {currentAnalysis?.report && (
-          <button
-            onClick={() => setShowTask(true)}
-            className="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-rose-500/10 border border-rose-500/25 text-rose-400 hover:bg-rose-500/20 hover:border-rose-500/35 transition-colors"
-          >
-            <ClipboardList className="w-4 h-4" />
-            <span>生成飞检任务</span>
-          </button>
+        {/* LLM 状态提示 */}
+        {canUseLLM() && llmStatus === 'loading' && (
+          <div className="flex items-center gap-2 text-xs text-cyan-400 px-2 py-1.5 rounded bg-cyan-500/5 border border-cyan-500/15">
+            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+            <span>DeepSeek 正在生成真实研判报告与飞检任务...</span>
+          </div>
+        )}
+        {canUseLLM() && llmStatus === 'error' && (
+          <div className="flex items-center gap-2 text-xs text-rose-400 px-2 py-1.5 rounded bg-rose-500/5 border border-rose-500/15">
+            <AlertTriangle className="w-3.5 h-3.5" />
+            <span>LLM 调用失败，已自动回退至本地模拟研判数据</span>
+          </div>
+        )}
+        {!canUseLLM() && (
+          <div className="flex items-center gap-2 text-xs text-amber-400 px-2 py-1.5 rounded bg-amber-500/5 border border-amber-500/15">
+            <Bot className="w-3.5 h-3.5" />
+            <span>未配置 VITE_DEEPSEEK_API_KEY，当前显示本地模拟数据</span>
+          </div>
         )}
 
-        {/* 飞检任务书 */}
-        <AnimatePresence>
-          {showTask && currentAnalysis?.task && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="p-4 rounded-lg bg-slate-800/50 border border-slate-700/50"
-            >
-              <div className="flex items-center gap-2 text-slate-100 font-semibold mb-3">
-                <Gavel className="w-4 h-4 text-amber-400" />
-                <span>飞检任务书</span>
-              </div>
-              <TaskPanel key={currentAnalysis.task.taskNo} task={currentAnalysis.task} />
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {/* Agent 协同动画 —— 用 key 重置 */}
+        {analysisForAgents && (
+          <AnalysisAgents
+            key={`agents-${alert.id}`}
+            analysis={analysisForAgents}
+            report={displayReport}
+          />
+        )}
+
+        {/* 生成飞检任务 */}
+        {displayTask && (
+          <TaskSection
+            key={`task-${alert.id}`}
+            alertId={alert.id}
+            task={displayTask}
+            hasLLMResult={hasLLMResult}
+            hasFallback={hasFallback}
+          />
+        )}
       </div>
     </div>
   );
@@ -390,5 +538,3 @@ function ReportContent({ report }: { report: AnalysisReport }) {
     </div>
   );
 }
-
-

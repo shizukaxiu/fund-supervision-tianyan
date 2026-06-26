@@ -9,7 +9,7 @@ import { formatCurrency, formatNumber } from '../utils/formatters';
  */
 
 interface KpiCardsProps {
-  overview: OverviewData;
+  overview: OverviewData | null;
 }
 
 interface KpiItem {
@@ -83,7 +83,7 @@ export function KpiCards({ overview }: KpiCardsProps) {
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 lg:gap-4 h-full">
       {kpis.map((kpi, index) => {
-        const value = overview[kpi.key] as number;
+        const value = overview ? (overview[kpi.key] as number) : 0;
         const isAbnormal = kpi.isAbnormal;
 
         return (
